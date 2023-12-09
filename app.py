@@ -313,7 +313,7 @@ def register_user():
     msg = request.args.get('msg')
     return render_template('register_customer.html', msg=msg)
 
-
+# Pencarian
 @app.route('/pencarian', methods=['GET'])
 def pencarian():
     token_receive = request.cookies.get(TOKEN_KEY)
