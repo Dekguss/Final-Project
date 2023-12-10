@@ -313,11 +313,7 @@ def register_user():
     msg = request.args.get('msg')
     return render_template('register_customer.html', msg=msg)
 
-<<<<<<< HEAD
-# ini Pencarian
-=======
-# Pencarian
->>>>>>> 21fd022fa2753c4c979be1d0b8eadbaf1258e2ab
+
 @app.route('/pencarian', methods=['GET'])
 def pencarian():
     token_receive = request.cookies.get(TOKEN_KEY)
@@ -346,6 +342,8 @@ def pencarian():
 
     return render_template('pencarian_customer.html', accommodations=paginated_accommodations, current_page=page, total_pages=total_pages)
 
+
+# route
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
 
