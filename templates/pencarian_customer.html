@@ -68,7 +68,7 @@
                 </ul>
 
 
-                <!-- Login -->
+                <!-- Ini Login -->
                 <ul class="navbar-nav ms-auto">
                     {% if not logged_in %}
                     <li class="nav-item d-flex gap-2">
@@ -102,19 +102,20 @@
                 </div>
 
 
-                <div class="album py-5 bg-body-tertiary">
+                <div class="album py-5">
                     <div class="container">
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="penginapan-container">
                             {% for accommodation in accommodations %}
                             <div class="col">
                                 <div class="card shadow-sm">
-                                    <img srcn="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
+                                    <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
                                         class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
                                     <div class="card-body">
                                         <div class="kepala">
-                                            <button type="button" class="btn btn-outline-primary btn-sm"
-                                                disabled> Denpasar </button>
-                                            <small class="text-body-secondary">Tersedia <b style="color: red;"> 2 unit </b></small>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                                                Denpasar </button>
+                                            <small class="text-body-secondary">Tersedia <b style="color: red;"> 2 unit
+                                                </b></small>
                                         </div>
                                         <div class="deskripsi">
                                             <h4 class="card-title-bold">{{ accommodation['nama'] }}</h4>
