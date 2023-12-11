@@ -201,6 +201,12 @@ def accommodation_detail(accommodation_id):
     accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
     return render_template('detail_penginapan_admin.html', accommodation=accommodation)
 
+@app.route('/accommodation_customer/<accommodation_id>')
+def accommodation_detail_customer(accommodation_id):
+    accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
+    return render_template('detail_penginapan_customer.html', accommodation=accommodation)
+
+
 @app.route('/edit_penginapan/<id>', methods=['GET', 'POST'])
 def edit_penginapan(id):
     accommodation = db.penginapan.find_one({"_id": ObjectId(id)})
@@ -340,8 +346,116 @@ def pencarian():
 
     total_pages = (len(all_accommodations) + accommodations_per_page - 1) // accommodations_per_page
 
-    return render_template('pencarian_customer.html', accommodations=paginated_accommodations, current_page=page, total_pages=total_pages)
+    if token_receive:
+        try:
+            payload = jwt.decode(
+                token_receive,
+                SECRET_KEY,
+                algorithms=['HS256']
+            )
+            if 'username' in payload:
+                login_in = True
+                user_info = db.customer.find_one({"username": payload['username']})
+                return render_template('pencarian_customer.html', accommodations=paginated_accommodations, current_page=page, total_pages=total_pages, logged_in=login_in, user_info=user_info)
 
+        except jwt.ExpiredSignatureError:
+            return jsonify({"result": "fail", "msg": "Token login has expired."})
+        except jwt.exceptions.DecodeError:
+            return jsonify({"result": "fail", "msg": "Token decoding error."})
+
+    return render_template('pencarian_customer.html', accommodations=paginated_accommodations, current_page=page, total_pages=total_pages, logged_in=False)
+
+
+@app.route('/check_login')
+def check_login():
+    token_receive = request.cookies.get(TOKEN_KEY)
+    if token_receive:
+        try:
+            payload = jwt.decode(
+                token_receive,
+                SECRET_KEY,
+                algorithms=['HS256']
+            )
+            if 'username' in payload:
+                return jsonify({'logged_in': True})
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({"result": "fail", "msg": "Token login has expired."})
+        except jwt.exceptions.DecodeError:
+            return jsonify({"result": "fail", "msg": "Token decoding error."})
+
+    return jsonify({'logged_in': False})
+
+
+@app.route('/pesan/<accommodation_id>', methods=['POST'])
+def pesan_accommodation(accommodation_id):
+    token_receive = request.cookies.get(TOKEN_KEY)
+    if not token_receive:
+        return jsonify({"result": "fail", "msg": "Silakan login untuk melakukan pemesanan."})
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+        if 'username' not in payload:
+            return jsonify({"result": "fail", "msg": "Pengguna tidak valid."})
+
+        jumlah_kamar = int(request.form.get('jumlah_kamar'))
+        tgl_pesan = request.form.get('tgl_pesan')
+        total_harga = int(request.form.get('total_harga'))
+
+        accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
+        if accommodation:
+            sisa_kamar = accommodation['jumlah_kamar'] - jumlah_kamar
+            if sisa_kamar >= 0:
+                db.penginapan.update_one(
+                    {"_id": ObjectId(accommodation_id)},
+                    {"$set": {'jumlah_kamar': sisa_kamar}}
+                )
+
+                db.pesanan.insert_one({
+                    'accommodation_id': ObjectId(accommodation_id),
+                    'status': 'pending',
+                    'nama_penginapan': accommodation['nama'],
+                    'customer_username': payload['username'],
+                    'jumlah_kamar': jumlah_kamar,
+                    'tgl_pesan': tgl_pesan,
+                    'total_harga': total_harga,
+                    'tgl_melakukan_pemesanan': datetime.utcnow().strftime('%Y-%m-%d')
+                })
+
+                return jsonify({"result": "success", "msg": "Pemesanan berhasil."})
+            else:
+                return jsonify({"result": "fail", "msg": "Jumlah kamar tidak mencukupi."})
+        else:
+            return jsonify({"result": "fail", "msg": "Akomodasi tidak ditemukan."})
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"result": "fail", "msg": "Token login telah kedaluwarsa."})
+    except jwt.exceptions.DecodeError:
+        return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
+
+@app.route('/cekpesanan/<username>')
+def user_orders(username):
+    token_receive = request.cookies.get(TOKEN_KEY)
+    user_orders = db.pesanan.find({'customer_username': username})
+    if token_receive:
+        try:
+            payload = jwt.decode(
+                token_receive,
+                SECRET_KEY,
+                algorithms=['HS256']
+            )
+            if 'username' in payload:
+                login_in = True
+                user_info = db.customer.find_one({"username": payload['username']})
+                return render_template('cek_pesanan_customer.html', user_orders=user_orders, user_info=user_info, logged_in=login_in)
+        except jwt.ExpiredSignatureError:
+            return jsonify({"result": "fail", "msg": "Token login has expired."})
+        except jwt.exceptions.DecodeError:
+            return jsonify({"result": "fail", "msg": "Token decoding error."})
 
 # route
 if __name__ == '__main__':

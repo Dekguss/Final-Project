@@ -110,7 +110,7 @@
                                 <h5 class="card-title">{{ accommodation['nama'] }}</h5>
                                 <p class="card-text">Lokasi: {{ accommodation['lokasi'] }}</p>
                                 <p class="card-text">Harga: Rp {{ accommodation['harga'] }}</p>
-                                <a href="{{ url_for('accommodation_detail', accommodation_id=accommodation['_id']) }}"
+                                <a href="{{ url_for('accommodation_detail_customer', accommodation_id=accommodation['_id']) }}"
                                     class="btn btn-primary">Detail</a>
                             </div>
                         </div>

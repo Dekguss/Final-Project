@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+
+    <!-- Link font Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Link Bulma -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css" />
+
+    <!-- Link Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Link Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Link jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+    <!-- Link Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+
+    <!-- Link jQuery Cookie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+
+    <script>
+        function logout() {
+            $.removeCookie('mytoken', { path: '/' });
+            alert('Signed out!');
+            window.location.href = "/";
+        }
+    </script>
+
+
+</head>
+
+<body>
+    <div class="bg-nav">
+        <nav class="navbar" id="navbar" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="/">
+                    <h2>Marerep</h2>
+                    <!-- <img src="../static/WisataKita.png" alt="" class="title is-4 is-logo"> -->
+                </a>
+
+                <!-- Toggle button for mobile -->
+                <a role="button" class="navbar-burger is-light" aria-label="menu" aria-expanded="false"
+                    data-target="navbarBasicExample" onclick="toggleNavbar()">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+
+            <div id="navbarBasicExample" class="navbar-menu">
+                <div class="navbar-start navbar-center">
+                    <a class="navbar-item home" href="/">Home</a>
+                    <a class="navbar-item" href="/pencarian">Pencarian</a>
+                    {% if logged_in %}
+                    <a class="navbar-item" href="/cekpesanan/{{user_info.username}}">Cek Pesanan</a>
+                    {% endif %}
+                </div>
+
+                <div class="navbar-end navbar-auth">
+                    {% if not logged_in %}
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <a class="button is-masuk" href="/login/user">Masuk</a>
+                            <a class="button is-daftar" href="/register/user">Daftar</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if logged_in %}
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <a class="button is-user-info">{{ user_info.username }}</a>
+                            <a class="button is-logout" onclick="logout()">Keluar</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container mt-5">
+        {% for order in user_orders %}
+        <div class="row border border-primary ">
+            <div class="col-md-10">
+                <h2 class="card-title">{{ order['nama_penginapan'] }}</h2>
+                <p class="card-text">Jumlah Kamar: {{ order['jumlah_kamar'] }}</p>
+                <p class="card-text">Tanggal Pesan: {{ order['tgl_pesan'] }}</p>
+                <p class="card-text">Total Harga: {{ order['total_harga'] }}</p>
+            </div>
+            <div class="col-md-2">
+                <p class="card-text text-center">{{ order['status'] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
