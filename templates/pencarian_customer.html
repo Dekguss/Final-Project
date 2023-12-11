@@ -27,9 +27,16 @@
     <!-- Link jQuery Cookie -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         * {
             font-family: 'Poppins', sans-serif;
+        }
+
+        .kepala {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -93,54 +100,74 @@
                         </div>
                     </form>
                 </div>
-                <div class="row row-cols-1 row-cols-md-3 g-4 mt-3" id="penginapan-container">
-                    {% for accommodation in accommodations %}
-                    <div class="col-4">
-                        <div class="card" style="width: 100%">
-                            <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
-                                class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ accommodation['nama'] }}</h5>
-                                <p class="card-text">Lokasi: {{ accommodation['lokasi'] }}</p>
-                                <p class="card-text">Harga: Rp {{ accommodation['harga'] }}</p>
+
+
+                <div class="album py-5 bg-body-tertiary">
+                    <div class="container">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="penginapan-container">
+                            {% for accommodation in accommodations %}
+                            <div class="col">
+                                <div class="card shadow-sm">
+                                    <img srcn="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
+                                        class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <div class="kepala">
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                disabled> Denpasar </button>
+                                            <small class="text-body-secondary">Tersedia <b style="color: red;"> 2 unit </b></small>
+                                        </div>
+                                        <div class="deskripsi">
+                                            <h4 class="card-title-bold">{{ accommodation['nama'] }}</h4>
+                                            <h6 class="card-text"><i class="fa fa-map-marker"
+                                                    style="font-size:30px"></i>
+                                                {{ accommodation['lokasi'] }}</h6>
+                                            <br>
+                                            <h4 class="d-flex justify-content-end">Harga: Rp {{ accommodation['harga']
+                                                }}
+                                            </h4>
+                                        </div>
+                                        <div class="d-flex justify-content-start">
+                                            <a href="{{ url_for('accommodation_detail_customer', accommodation_id=accommodation['_id']) }}"
+                                                class="btn btn-primary">Detail</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <a href="{{ url_for('accommodation_detail_customer', accommodation_id=accommodation['_id']) }}"
-                                    class="btn btn-primary">Detail</a>
-                            </div>
+                            {% endfor %}
                         </div>
+
+
+
+                        <!-- Add pagination links -->
+                        <div class="pagination justify-content-center mt-5">
+                            <ul class="pagination">
+                                {% if current_page > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?pencarian={{ pencarian }}&page={{ current_page - 1 }}"
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% for num in range(1, total_pages + 1) %}
+                                <li class="page-item {% if num == current_page %}active{% endif %}">
+                                    <a class="page-link" href="?pencarian={{ pencarian }}&page={{ num }}">{{ num
+                                        }}</a>
+                                </li>
+                                {% endfor %}
+
+                                {% if current_page < total_pages %} <li class="page-item">
+                                    <a class="page-link" href="?pencarian={{ pencarian }}&page={{ current_page + 1 }}"
+                                        aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                    </li>
+                                    {% endif %}
+                            </ul>
+                        </div>
+
                     </div>
-                    {% endfor %}
-                </div>
-                <!-- Add pagination links -->
-                <div class="pagination justify-content-center mt-5">
-                    <ul class="pagination">
-                        {% if current_page > 1 %}
-                        <li class="page-item">
-                            <a class="page-link" href="?pencarian={{ pencarian }}&page={{ current_page - 1 }}"
-                                aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        {% endif %}
-
-                        {% for num in range(1, total_pages + 1) %}
-                        <li class="page-item {% if num == current_page %}active{% endif %}">
-                            <a class="page-link" href="?pencarian={{ pencarian }}&page={{ num }}">{{ num }}</a>
-                        </li>
-                        {% endfor %}
-
-                        {% if current_page < total_pages %} <li class="page-item">
-                            <a class="page-link" href="?pencarian={{ pencarian }}&page={{ current_page + 1 }}"
-                                aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                            </li>
-                            {% endif %}
-                    </ul>
-                </div>
-
-            </div>
         </section>
     </div>
 
