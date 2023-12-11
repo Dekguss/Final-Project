@@ -46,6 +46,7 @@
             alert('Signed out!');
             window.location.href = "/";
         }
+        
     </script>
 
 
@@ -112,6 +113,16 @@
             <div class="col-md-2">
                 <p class="card-text text-center">{{ order['status'] }}</p>
             </div>
+
+            {% if order['status'] == 'canceled' %}
+            <form action="/hapus/pesanan/{{ order['_id'] }}" method="post">
+                <button type="submit" class="btn btn-outline-danger">Hapus Pesanan</button>
+            </form>
+            {% else %}
+            <form action="/batal/pesanan/{{ order['_id'] }}" method="post">
+                <button type="submit" class="btn btn-danger">Batalkan Pesanan</button>
+            </form>
+            {% endif %}
         </div>
         {% endfor %}
     </div>

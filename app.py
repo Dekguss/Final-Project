@@ -457,6 +457,88 @@ def user_orders(username):
         except jwt.exceptions.DecodeError:
             return jsonify({"result": "fail", "msg": "Token decoding error."})
 
+@app.route('/batal/pesanan/<order_id>', methods=['POST'])
+def batalkan_pesanan(order_id):
+    token_receive = request.cookies.get(TOKEN_KEY)
+    
+    if not token_receive:
+        return jsonify({"result": "fail", "msg": "Silakan login untuk membatalkan pesanan."})
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+        if 'username' not in payload:
+            return jsonify({"result": "fail", "msg": "Pengguna tidak valid."})
+
+        # Cek status pesanan sebelum membatalkan
+        order = db.pesanan.find_one({"_id": ObjectId(order_id)})
+        if order and order['status'] != 'canceled':
+            # Dapatkan jumlah kamar yang dibatalkan
+            jumlah_kamar_dibatalkan = order['jumlah_kamar']
+
+            # Dapatkan jumlah kamar yang tersedia saat ini dari akomodasi
+            accommodation_id = order['accommodation_id']
+            akomodasi = db.penginapan.find_one({"_id": accommodation_id})
+            jumlah_kamar_tersedia = akomodasi['jumlah_kamar']
+
+            # Cek apakah sudah H-2 dari tanggal pemesanan
+            tgl_pesan = datetime.strptime(order['tgl_pesan'], '%Y-%m-%d')
+            batas_pembatalan = tgl_pesan - timedelta(days=2)
+            sekarang = datetime.utcnow()
+
+            if sekarang >= batas_pembatalan:
+                return jsonify({"result": "fail", "msg": "Tidak dapat membatalkan pesanan kurang dari 2 hari sebelum tanggal pemesanan."})
+
+            # Perbarui jumlah kamar pada penginapan
+            db.penginapan.update_one(
+                {"_id": accommodation_id},
+                {"$set": {'jumlah_kamar': jumlah_kamar_tersedia + jumlah_kamar_dibatalkan}}
+            )
+
+            # Update status pesanan menjadi 'canceled'
+            db.pesanan.update_one(
+                {"_id": ObjectId(order_id)},
+                {"$set": {'status': 'canceled'}}
+            )
+            return redirect(url_for('user_orders', username=payload['username']))
+        else:
+            return jsonify({"result": "fail", "msg": "Pesanan tidak ditemukan atau sudah dibatalkan."})
+    except jwt.ExpiredSignatureError:
+        return jsonify({"result": "fail", "msg": "Token login telah kedaluwarsa."})
+    except jwt.exceptions.DecodeError:
+        return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
+
+@app.route('/hapus/pesanan/<order_id>', methods=['POST'])
+def hapus_pesanan(order_id):
+    token_receive = request.cookies.get(TOKEN_KEY)
+    
+    if not token_receive:
+        return jsonify({"result": "fail", "msg": "Silakan login untuk menghapus pesanan."})
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+        if 'username' not in payload:
+            return jsonify({"result": "fail", "msg": "Pengguna tidak valid."})
+
+        # Cek status pesanan sebelum menghapus
+        order = db.pesanan.find_one({"_id": ObjectId(order_id)})
+        if order and order['status'] == 'canceled':
+            # Hapus pesanan
+            db.pesanan.delete_one({"_id": ObjectId(order_id)})
+            return redirect(url_for('user_orders', username=payload['username']))
+        else:
+            return jsonify({"result": "fail", "msg": "Pesanan tidak ditemukan atau sudah dihapus."})
+    except jwt.ExpiredSignatureError:
+        return jsonify({"result": "fail", "msg": "Token login telah kedaluwarsa."})
+    except jwt.exceptions.DecodeError:
+        return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
 # route
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
