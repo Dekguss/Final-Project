@@ -190,26 +190,39 @@
                     </p>
                 </div>
 
-                <div class="row">
-                    {% for accommodation in accommodations[-3:] %}
-                    <div class="col-4">
-                        <div class="card" style="width: 100%">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="penginapan-container">
+                    {% for accommodation in accommodations [-3:] %}
+                    <div class="col">
+                        <div class="card shadow-sm">
                             <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
                                 class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
                             <div class="card-body">
-                                <h5 class="card-title">{{ accommodation['nama'] }}</h5>
-                                <p class="card-text">Lokasi: {{ accommodation['lokasi'] }}</p>
-                                <p class="card-text">Harga: Rp {{ accommodation['harga'] }}</p>
+                                <div class="kepala">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                                        Denpasar </button>
+                                    <small class="text-body-secondary">Tersedia <b style="color: red;"> 2 unit
+                                        </b></small>
+                                </div>
+                                <div class="deskripsi">
+                                    <h4 class="card-title-bold">{{ accommodation['nama'] }}</h4>
+                                    <h6 class="card-text"><i class="fa fa-map-marker"
+                                            style="font-size:30px"></i>
+                                        {{ accommodation['lokasi'] }}</h6>
+                                    <br>
+                                    <h4 class="d-flex justify-content-end">Harga: Rp {{ accommodation['harga']
+                                        }}
+                                    </h4>
+                                </div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
-                    <div class="columns is-centered mt-3">
-                        <div class="column is-half-tablet">
-                            <div class="has-text-centered">
-                                <div>
-                                    <a href="/pencarian" class="button is-lihat">Lihat Semua</a>
-                                </div>
+                </div>
+                <div class="columns is-centered mt-3" style="padding-top: 50px; padding-bottom: 50px;">
+                    <div class="column is-half-tablet">
+                        <div class="has-text-centered">
+                            <div>
+                                <a href="/pencarian" class="button is-lihat">Lihat Semua</a>
                             </div>
                         </div>
                     </div>
