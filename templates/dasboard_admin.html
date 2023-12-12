@@ -81,7 +81,7 @@
                 <div class="navbar-end navbar-auth">
                     <div class="navbar-item">
                         <div class="buttons">
-                            <a class="button is-logout" href="#">Logout</a>
+                            <a class="btn btn-danger is-logout" href="#">Logout</a>
                         </div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@
                     <div class="col">
                         <div class="card">
                             <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
-                                class="card-img-top" alt="...">
+                                class="card-img-top" alt="..." style="height: 200px; object-fit: cover;" >
                             <div class="card-body">
                                 <h5 class="card-title">{{ accommodation['nama'] }}</h5>
                                 <p class="card-text">Lokasi: {{ accommodation['lokasi'] }}</p>
