@@ -107,13 +107,20 @@ def login_admin():
 @app.route('/admin')
 def admin():
     token_receive = request.cookies.get(TOKEN_KEY)
+
     try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
-        user_info = db.admin.find_one({"id": payload["id"]})
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
 
-        accommodations = list(db.penginapan.find())
-
-        return render_template("dasboard_admin.html", user_info=user_info, accommodations=accommodations)
+        if 'id' in payload:
+            user_info = db.admin.find_one({"id": payload["id"]})
+            accommodations = list(db.penginapan.find())
+            return render_template("dasboard_admin.html", user_info=user_info, accommodations=accommodations)
+        else:
+            return redirect(url_for("login_admin", msg="Silahkan login!"))
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login_admin", msg="Token login anda sudah kedaluarsa!"))
     except jwt.exceptions.DecodeError:
@@ -244,6 +251,31 @@ def edit_penginapan(id):
         return redirect(url_for('accommodation_detail', accommodation_id=id))
 
     return render_template('edit_penginapan_admin.html', accommodation=accommodation)
+
+
+@app.route('/cekpesanan/admin')
+def cek_pesanan_admin():
+    token_receive = request.cookies.get(TOKEN_KEY)
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+
+        if 'id' in payload:
+            user_info = db.admin.find_one({"id": payload["id"]})
+            orders = list (db.pesanan.find())
+            return render_template('cek_pesanan_admin.html', orders=orders)
+        else:
+            return redirect(url_for("login_admin", msg="Silahkan login!"))
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login_admin", msg="Token login anda sudah kedaluarsa!"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login_admin", msg="Terdapat masalah saat anda login!"))
+
+
 
 # USER CUSTOMER
 
@@ -539,7 +571,36 @@ def hapus_pesanan(order_id):
         return jsonify({"result": "fail", "msg": "Token login telah kedaluwarsa."})
     except jwt.exceptions.DecodeError:
         return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
-# route
+
+
+@app.route('/terima/pesanan/<order_id>', methods=['POST'])
+def terima_pesanan(order_id):
+    token_receive = request.cookies.get(TOKEN_KEY)
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+        if 'id' not in payload:
+            return jsonify({"result": "fail", "msg": "Admin tidak valid."})
+
+        order = db.pesanan.find_one({"_id": ObjectId(order_id)})
+        if order and order['status'] == 'pending':
+            # Update pesanan
+            db.pesanan.update_one(
+                {"_id": ObjectId(order_id)},
+                {"$set": {'status': 'accepted'}}
+            )
+            return redirect(url_for('cek_pesanan_admin'))
+        else:
+            return jsonify({"result": "fail", "msg": "Pesanan tidak ditemukan atau sudah dihapus."})
+    except jwt.ExpiredSignatureError:
+        return jsonify({"result": "fail", "msg": "Token login telah kedaluwarsa."})
+    except jwt.exceptions.DecodeError:
+        return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
+
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
 
