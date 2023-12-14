@@ -32,6 +32,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+
+    <style>
+        
+        .image {
+            overflow: hidden;
+        }
+
+        .card img {
+            width: 500px;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .card:hover img:hover {
+            transform: scale(1.2);
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -48,10 +68,10 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto gap-4">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        <a class="nav-link" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/pencarian">Pencarian</a>
+                        <a class="nav-link active" href="/pencarian">Pencarian</a>
                     </li>
                     {% if logged_in %}
                     <li class="nav-item">
@@ -88,28 +108,30 @@
                         Jelajahi Penginapan
                     </h1>
                     <form action="/pencarian" method="GET" class="search-form mt-4">
-                        <div class="input-group">
+                        <div class="input-group" style="height: 50px;">
                             <input type="text" name="pencarian" class="form-control"
                                 placeholder="Cari penginapan berdasarkan tempat wisata terdekat...">
-                            <button type="submit" class="btn btn-primary">Cari</button>
+                            <button type="submit" class="btn btn-custom">Cari</button>
                         </div>
                     </form>
                 </div>
-                
+
                 <div class="album py-5">
                     <div class="container">
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="penginapan-container">
                             {% for accommodation in accommodations %}
                             <div class="col">
                                 <div class="card shadow-sm">
-                                    <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
-                                        class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
+                                    <div class="image">
+                                        <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
+                                        class="card-img-top" alt="gambar">
+                                    </div>
                                     <div class="card-body">
                                         <div class="kepala">
                                             <button type="button" class="btn btn-outline-primary btn-sm" disabled>
                                                 {{ accommodation['lokasi'] }} </button>
                                             <small class="text-body-secondary">Tersedia <b style="color: red;"> {{
-                                                    accommodation['jumlah_kamar'] }} unit
+                                                    accommodation['jumlah_kamar'] }} kamar
                                                 </b></small>
                                         </div>
                                         <div class="deskripsi">
@@ -119,7 +141,7 @@
                                         </div>
                                         <div class="d-flex justify-content-start mt-3">
                                             <a href="{{ url_for('accommodation_detail_customer', accommodation_id=accommodation['_id']) }}"
-                                                class="btn btn-primary">Detail</a>
+                                                class="btn btn-custom">Detail</a>
                                         </div>
                                     </div>
                                 </div>
@@ -135,6 +157,7 @@
                                 {% if current_page > 1 %}
                                 <li class="page-item">
                                     <a class="page-link" href="?pencarian={{ pencarian }}&page={{ current_page - 1 }}"
+                                        style="background-color: #558ca1; border-color: #558ca1; color: white;"
                                         aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
@@ -142,14 +165,24 @@
                                 {% endif %}
 
                                 {% for num in range(1, total_pages + 1) %}
-                                <li class="page-item {% if num == current_page %}active{% endif %}">
-                                    <a class="page-link" href="?pencarian={{ pencarian }}&page={{ num }}">{{ num
+                                {% if num == current_page %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="?pencarian={{ pencarian }}&page={{ num }}"
+                                        style="background-color: #558ca1; border-color:  #558ca1;">{{ num
                                         }}</a>
                                 </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?pencarian={{ pencarian }}&page={{ num }}"
+                                        style="color: #558ca1;">{{ num
+                                        }}</a>
+                                </li>
+                                {% endif %}
                                 {% endfor %}
 
                                 {% if current_page < total_pages %} <li class="page-item">
                                     <a class="page-link" href="?pencarian={{ pencarian }}&page={{ current_page + 1 }}"
+                                        style="background-color: #558ca1; border-color: #558ca1; color: white; "
                                         aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>

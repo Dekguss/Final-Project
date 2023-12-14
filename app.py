@@ -357,7 +357,7 @@ def pencarian():
     token_receive = request.cookies.get(TOKEN_KEY)
     pencarian = request.args.get('pencarian')
 
-    accommodations_per_page = 9
+    accommodations_per_page = 3
    
     page = request.args.get('page', 1, type=int)
 
