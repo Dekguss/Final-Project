@@ -35,13 +35,17 @@
           border-bottom-left-radius: 0.5rem;
         }
       }
+      .btn-block{
+            background-color: #558CA1;
+            color: white;
+        }
       #id,
       #password {
-      border: 2px solid #007BFF;
+      border: 2px solid #558CA1;
       }
       #id:focus,
       #password:focus {
-      border: 3px solid #007BFF;
+      border: 3px solid #558CA1;
       }
       form {
       text-align: left;
@@ -99,8 +103,11 @@
                     <!-- Form Section -->
                     <div class="col-lg-6">
                         <div class="card-body py-5 px-md-5">
+                            <div class="text-center">
+                                <img src="../static/logo.png"
+                                  style="width: 185px;" alt="logo">
+                              </div>
                             <form>
-                                <img src="../static/logo.png" alt="" width="95" height="70">
                                 <h3 class="fw-bold mb-5">Masuk</h3>
                                 <!-- Email input -->
                                 <div class="form-outline mb-3">
@@ -115,7 +122,7 @@
                                 </div>
     
                                 <!-- Submit button -->
-                                <button type="button" id="masukButton" class="btn btn-primary btn-block mb-4">
+                                <button type="button" id="masukButton" class="btn btn-block mb-4">
                                     Masuk
                                 </button>
                             </form>
