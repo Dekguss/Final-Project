@@ -450,6 +450,7 @@ def pesan_accommodation(accommodation_id):
                 db.pesanan.insert_one({
                     'accommodation_id': ObjectId(accommodation_id),
                     'status': 'pending',
+                    'gambar': accommodation['gambar'],
                     'nama_penginapan': accommodation['nama'],
                     'customer_username': payload['username'],
                     'jumlah_kamar': jumlah_kamar,
