@@ -40,6 +40,64 @@
             max-width: 300px;
             max-height: 300px;
         }
+
+        .container-hero {
+            height: 700px;
+            padding: 0;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .container-hero img {
+            width: 55%;
+            height: auto;
+        }
+
+        .hero-text {
+            width: 50%;
+        }
+
+        .hero-text h1 {
+            font-size: 3.3rem;
+            margin-bottom: 8px;
+            color: black;
+        }
+
+        .hero-text p {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+        }
+
+        .hero-text a {
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        @media (max-width:992px) {
+            .container-hero {
+                margin-top: 5px;
+                margin-bottom: 10px;
+                flex-direction: column;
+            }
+            .container-hero img {
+                width: 100%;
+            }
+            .hero-text {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 1.7rem;
+
+            }
+        }
+
     </style>
 </head>
 
@@ -91,25 +149,20 @@
 
     <!-- Main -->
     <main>
-        <div class="container mt-5 d-flex flex-wrap-reverse" id="containerHero">
-            <div class="row">
-                <div class="col-6 d-flex align-items-center">
-                    <div>
-                        <h1 style="font-size: 50px; font-weight: 800">
-                            Spend Wisely during Vacation in Bali
-                        </h1>
-                        <p>
-                            Takut boncos pas liburan ke Bali karena biaya transport ke tempat tujuan wisatamu?
-                            Cari Penginapan yang dekat tempat wisata tujuanmu, yuk!
-                        </p>
-                        <a href="/pencarian" class="btn btn-dark mt-3">Mulai Eksplorasi</a>
-                    </div>
-                </div>
-                <div class="col-6 d-flex align-items-center">
-                    <img class="rounded shadow" width="100%" src="./static/balibackground.jpg" alt="" />
+        <div class="container">
+            <div class="container-hero">
+                <img class="rounded-shadow" src="./static/balibackground.jpg">
+                <div class="hero-text">
+                    <h1>Spend Wisely during Vacation to Bali</h1>
+                    <p>Takut boncos pas liburan ke Bali karena biaya transport ke tempat tujuan wisatamu?
+                        Cari Penginapan yang dekat tempat wisata tujuanmu, yuk!</p>
+                    <a href="/pencarian" class="btn btn-dark mt-3">Mulai Eksplorasi</a>
                 </div>
             </div>
         </div>
+
+
+
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
@@ -259,7 +312,7 @@
         </div>
     </main>
 
-<!-- Footer section -->
+
     <footer class="bd-footer mt-5">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
             <div class="row">

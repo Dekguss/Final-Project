@@ -49,11 +49,6 @@
     color: white;
 }
 
-#containerHero {
-    height: 700px;
-    display: flex;
-    align-items: center;
-}
 
 .sambar {
     font-family: 'Noto Serif Balinese', serif;
