@@ -34,7 +34,6 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
 
     <style>
-        
         .image {
             overflow: hidden;
         }
@@ -49,6 +48,7 @@
         .card:hover img:hover {
             transform: scale(1.2);
         }
+
     </style>
 
 
@@ -66,7 +66,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav ms-auto gap-4">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/">Home</a>
                     </li>
@@ -124,7 +124,7 @@
                                 <div class="card shadow-sm">
                                     <div class="image">
                                         <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
-                                        class="card-img-top" alt="gambar">
+                                            class="card-img-top" alt="gambar">
                                     </div>
                                     <div class="card-body">
                                         <div class="kepala">

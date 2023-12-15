@@ -35,14 +35,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
-<style>
- .img {
-    max-width: 300px;
-    max-height: 300px;
- }
-
-
-</style>
+    <style>
+        .img {
+            max-width: 300px;
+            max-height: 300px;
+        }
+    </style>
 </head>
 
 <body>
@@ -57,7 +55,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav ms-auto gap-4">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
@@ -183,7 +181,7 @@
                             </div>
                         </div>
                         <div class="col">
-                            <div class="card h-100" 
+                            <div class="card h-100"
                                 style="width: 100%; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                                 <div class="card-body text-center">
                                     <div class="image" style="padding-top: 30%;">
@@ -221,35 +219,40 @@
                     </p>
                 </div>
 
-                <div class="row mt-4">
+                <div class="row mt-4 row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-3 g-3">
                     {% for accommodation in accommodations[-3:] %}
                     <div class="col">
                         <div class="card shadow-sm">
-                            <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
-                                class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
+                            <div class="image mb-2">
+                                <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
+                                    class="card-img-top" alt="gambar">
+                            </div>
                             <div class="card-body">
                                 <div class="kepala">
                                     <button type="button" class="btn btn-outline-primary btn-sm" disabled>
                                         {{ accommodation['lokasi'] }} </button>
                                     <small class="text-body-secondary">Tersedia <b style="color: red;"> {{
-                                            accommodation['jumlah_kamar'] }} unit
+                                            accommodation['jumlah_kamar'] }} kamar
                                         </b></small>
                                 </div>
                                 <div class="deskripsi">
                                     <h4 class="card-title-bold">{{ accommodation['nama'] }}</h4>
-                                    <h6 class="d-flex justify-content-end">Harga: Rp {{ accommodation['harga']}}
+                                    <h6 class="d-flex">Harga: Rp {{ accommodation['harga']}}
                                     </h6>
+                                </div>
+                                <div class="d-flex justify-content-start mt-3">
+                                    <a href="{{ url_for('accommodation_detail_customer', accommodation_id=accommodation['_id']) }}"
+                                        class="btn btn-custom">Detail</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
-                    <div class="mt-5 text-center">
-                        <div>
-                            <a href="/pencarian" class="btn btn-custom">Lihat Semua</a>
-                        </div>
+                </div>
+                <div class="mt-5 text-center">
+                    <div>
+                        <a href="/pencarian" class="btn btn-custom">Lihat Semua</a>
                     </div>
-
                 </div>
             </div>
         </div>

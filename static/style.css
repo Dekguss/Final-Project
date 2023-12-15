@@ -25,6 +25,18 @@
     color: var(--blue);
 }
 
+.navbar-collapse {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.navbar-nav {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 .btn-custom {
     background-color: #558ca1;
     color: white;
@@ -55,10 +67,11 @@
     border: none;
     box-shadow: none;
 }
+
 .img {
     max-width: 300px;
     max-height: 300px;
- }
+}
 
 #Jelajahi .card-body {
     padding: 0px;
