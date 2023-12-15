@@ -35,12 +35,33 @@
         * {
             font-family: 'Poppins', sans-serif;
         }
+        .title{
+            text-align: center;
+        }
+        #gambar,
+        #namaPenginapan,
+        #lokasi,
+        #jumlahKamar,
+        #harga,
+        #deskripsi,
+        #tempatWisata {
+        border: 2px solid #558CA1;
+        }
+        #gambar :focus,
+        #namaPenginapan :focus,
+        #lokasi :focus,
+        #jumlahKamar :focus,
+        #harga :focus,
+        #deskripsi:focus,
+        #tempatWisata:focus {
+        border: 3px solid #558CA1;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h2>Edit Penginapan</h2>
+    <div class="container mt-6 shadow-p p-3 mb-5 bg-body-tertiary rounded">
+        <h2 class="title">Edit Penginapan</h2>
         <form method="post" action="{{ url_for('edit_penginapan', id=accommodation['_id']) }}"
             enctype="multipart/form-data">
             <div class="mb-3">

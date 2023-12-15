@@ -35,11 +35,32 @@
         * {
             font-family: 'Poppins', sans-serif;
         }
+        .title{
+            text-align: center;
+        }
+        #gambar,
+        #namaPenginapan,
+        #lokasi,
+        #jumlahKamar,
+        #harga,
+        #deskripsi,
+        #tempatWisata {
+        border: 2px solid #558CA1;
+        }
+        #gambar :focus,
+        #namaPenginapan :focus,
+        #lokasi :focus,
+        #jumlahKamar :focus,
+        #harga :focus,
+        #deskripsi:focus,
+        #tempatWisata:focus {
+        border: 3px solid #558CA1;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container-sm mt-6 shadow-p p-3 mb-5 bg-body-tertiary rounded">
         <h2 class="title">Tambah Penginapan</h2>
 
         <form method="POST" action="/tambah/penginapan" enctype="multipart/form-data">
