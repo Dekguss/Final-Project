@@ -12,6 +12,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
         rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Balinese&display=swap" rel="stylesheet">
 
     <!-- Link Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -32,7 +35,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+<style>
+ .img {
+    max-width: 300px;
+    max-height: 300px;
+ }
 
+
+</style>
 </head>
 
 <body>
@@ -83,7 +93,7 @@
 
     <!-- Main -->
     <main>
-        <div class="container mt-5" id="containerHero">
+        <div class="container mt-5 d-flex flex-wrap-reverse" id="containerHero">
             <div class="row">
                 <div class="col-6 d-flex align-items-center">
                     <div>
@@ -107,7 +117,7 @@
                 <div class="col-12 text-center">
                     <h1 style="font-size: 36px; font-weight: 900">Marerep</h1>
                     <p class="mt-2">
-                        Marerep (<b class="highlight">ᬫᬋᬋᬧ᭄᭟​</b>) ialah kata bahasa Bali yang berarti "Menginap".<br>
+                        Marerep (<b class="sambar">ᬫᬋᬋᬧ᭄᭟​</b>) ialah kata bahasa Bali yang berarti "Menginap".<br>
                         Website ini menyediakan layanan sewa <b>rerepan</b> (penginapan) di Bali yang memberikan
                         kenyamanan bagi kantongmu, dengan sistem pencarian penginapan berdasarkan tempat wisata tujuan
                         ketika berlibur ke Bali. Karena tempatmu menginap dengan lokasi wisata yang dekat,
@@ -123,53 +133,76 @@
                 <div class="col-12 text-center">
                     <h1 style="font-size: 36px; font-weight: 900">Mengapa Marerep?</h1>
                     <p class="mt-2">
-                        Berbagai Keunggulan yang dimiliki <b>Marerep</b>
+                        Dengan <b>Marerep</b> Liburanmu ke Bali akan terasa
                     </p>
                 </div>
 
-                <div class="row mt-2">
-                    <div class="col-4">
-                        <div class="card"
-                            style="width: 100%; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                            <div class="card-body text-center">
-                                <i class="bi bi-person-fill" style="font-size: 4rem"></i>
-                                <h1 style="font-weight: 900; font-size: 20px; margin-top: -15px" class="card-title">
-                                    Cost Efficient
-                                </h1>
-                                <p class="card-text">
-                                    Jarak tempuh penginapan ke tempat wisata impian yang terukur, bisa memangkas biaya
-                                    perjalanan selama di Bali sehingga efisien
-                                </p>
+                <div class="container align-items-strech">
+                    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-3 g-3">
+                        <div class="col">
+                            <div class="card h-100"
+                                style="width: 100%; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                <div class="card-body text-center">
+                                    <div class="image">
+                                        <img class="card-img-top" width="100%" src="./static/convenient.svg"
+                                            alt="amico" />
+                                    </div>
+                                    <div class="card-body">
+                                        <h1 style="font-weight: 900; font-size: 20px; margin-top: -15px"
+                                            id="card-title">
+                                            Convenient Guaranteed
+                                        </h1>
+                                        <p class="card-text">
+                                            Kenyamanan anda adalah prioritas kami.
+                                            Kalau merasa tidak nyaman bisa klaim untuk penggantian kamar sesuai selera
+                                            tanpa biaya tambahan.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="card"
-                            style="width: 100%; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                            <div class="card-body text-center">
-                                <i class="bi bi-person-fill" style="font-size: 4rem"></i>
-                                <h1 style="font-weight: 900; font-size: 20px; margin-top: -15px" class="card-title">
-                                    Cost Efficient
-                                </h1>
-                                <p class="card-text">
-                                    Jarak tempuh penginapan ke tempat wisata impian yang terukur, bisa memangkas biaya
-                                    perjalanan selama di Bali sehingga efisien
-                                </p>
+                        <div class="col">
+                            <div class="card h-100"
+                                style="width: 100%; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                <div class="card-body text-center">
+                                    <div class="image">
+                                        <img class="card-img-top" width="100%" src="./static/cost-efficient.svg"
+                                            alt="amico" />
+                                    </div>
+                                    <div class="card-body">
+                                        <h1 style="font-weight: 900; font-size: 20px; margin-top: -15px"
+                                            id="card-title">
+                                            Cost Efficient
+                                        </h1>
+                                        <p class="card-text">
+                                            Jarak tempuh penginapan ke tempat wisata impian yang terukur, bisa memangkas
+                                            biaya perjalanan selama di Bali sehingga efisien
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="card"
-                            style="width: 100%; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                            <div class="card-body text-center">
-                                <i class="bi bi-person-fill" style="font-size: 4rem"></i>
-                                <h1 style="font-weight: 900; font-size: 20px; margin-top: -15px" class="card-title">
-                                    Cost Efficient
-                                </h1>
-                                <p class="card-text">
-                                    Jarak tempuh penginapan ke tempat wisata impian yang terukur, bisa memangkas biaya
-                                    perjalanan selama di Bali sehingga efisien
-                                </p>
+                        <div class="col">
+                            <div class="card h-100" 
+                                style="width: 100%; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                <div class="card-body text-center">
+                                    <div class="image" style="padding-top: 30%;">
+                                        <img class="card-img-top" width="100%" src="./static/memorable.svg"
+                                            alt="amico" />
+                                    </div>
+                                    <div class="card-body">
+                                        <h1 style="font-weight: 900; font-size: 20px; margin-top: -15px"
+                                            id="card-title">
+                                            Memorable and Worth Sharing
+                                        </h1>
+                                        <p class="card-text">
+                                            Pengalaman ke tempat impian tentunya selalu membawa kesan tak terlupakan dan
+                                            sangat berharga untuk dibagikan,
+                                            apalagi kalau nyaman dan sesuai anggaran. Worth sharing banget deh pokoknya!
+                                        </p>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -184,7 +217,7 @@
                         Jelajahi Penginapan
                     </h1>
                     <p class="mt-2">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        Ayo temukan penginapanmu di sini!
                     </p>
                 </div>
 
@@ -223,7 +256,7 @@
         </div>
     </main>
 
-    
+
     <footer class="bd-footer mt-5">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
             <div class="row">

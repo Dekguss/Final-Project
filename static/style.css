@@ -43,6 +43,10 @@
     align-items: center;
 }
 
+.sambar {
+    font-family: 'Noto Serif Balinese', serif;
+}
+
 .margin-container {
     margin-top: 100px;
 }
@@ -51,6 +55,10 @@
     border: none;
     box-shadow: none;
 }
+.img {
+    max-width: 300px;
+    max-height: 300px;
+ }
 
 #Jelajahi .card-body {
     padding: 0px;
@@ -62,6 +70,6 @@
     margin-bottom: 10px;
 }
 
-.content{
+.content {
     margin-top: 150px;
 }
