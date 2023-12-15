@@ -46,6 +46,10 @@
                 margin-top: 120px;
             }
         }
+
+        footer {
+            box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
+        }
     </style>
 </head>
 
@@ -86,7 +90,8 @@
                     {% endif %}
                     {% if logged_in %}
                     <li class="nav-item d-flex gap-2">
-                        <a class="nav-link active btn" aria-current="page" href="#">{{ user_info.username
+                        <a class="nav-link active btn" aria-current="page" href="/profile/{{ user_info.username }}">{{
+                            user_info.username
                             }}</a>
                     </li>
                     {% endif %}
@@ -98,14 +103,14 @@
     <!-- Main -->
     <main>
         <div class="container mt-5 d-flex" id="containerHero">
-            <div class="row">
+            <div class="row" style="margin-top: 100px;">
                 <div class="col-12 col-md-6 d-flex align-items-center order-md-2">
                     <img class="rounded shadow" width="100%" src="./static/balibackground.jpg" alt="" />
                 </div>
 
                 <div class="col-12 col-md-6 d-flex align-items-center order-md-1">
                     <div>
-                        <h1  class="mt-3" style="font-size: 50px; font-weight: 800">
+                        <h1 class="mt-3" style="font-size: 50px; font-weight: 800">
                             Spend Wisely during Vacation in Bali
                         </h1>
                         <p>
@@ -263,9 +268,9 @@
     </main>
 
     <!-- Footer section -->
-    <footer class="bd-footer mt-5">
+    <footer class="bd-footer border-top py-4" style="margin-top: 100px;">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
-            <div class="row">
+            <div class="row ">
                 <div class="col-lg-6 mb-3">
                     <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="/"
                         aria-label="Bootstrap">

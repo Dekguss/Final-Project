@@ -37,7 +37,8 @@
         * {
             font-family: 'Poppins', sans-serif;
         }
-        .btn-primary{
+
+        .btn-primary {
             margin-left: 10px;
             margin-right: 10px;
         }
@@ -102,49 +103,58 @@
                     <h2 class="title">Jelajahi Penginapan</h2>
                     <p class="subtitle is-6">Lorem Ipsum is simply text</p>
                 </div>
+         
                 <div class="columns features">
                     <div class="column">
-                        <a class="button is-success rounded-pill shadow p-3 mb-5 rounded" href="/tambah/penginapan">Tambah Penginapan</a>
+                        <a class="button is-success rounded-pill shadow p-3 mb-5 rounded"
+                            href="/tambah/penginapan">Tambah Penginapan</a>
                     </div>
                 </div>
-                
+
+                <form action="/pencarian" method="GET" class="search-form mt-4">
+                    <div class="input-group" style="height: 50px;">
+                        <input type="text" name="pencarian" class="form-control"
+                            placeholder="Cari penginapan berdasarkan tempat wisata terdekat...">
+                        <button type="submit" class="btn btn-custom">Cari</button>
+                    </div>
+                </form>
+
                 <div class="row row-cols-1 row-cols-md-3 g-4" id="penginapan-container">
                     {% for accommodation in accommodations %}
-                            <div class="col">
-                                <div class="card shadow-sm">
-                                    <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
-                                        class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body">
-                                        <div class="kepala">
-                                            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
-                                                Denpasar </button>
-                                            <small class="text-body-secondary">Tersedia <b style="color: red;"> 2 unit
-                                                </b></small>
-                                        </div>
-                                        <div class="deskripsi">
-                                            <h4 class="card-title-bold">{{ accommodation['nama'] }}</h4>
-                                            <h6 class="card-text"><i class=""
-                                                    style="font-size:30px"></i>
-                                                {{ accommodation['lokasi'] }}</h6>
-                                            <br>
-                                            <h4 class="d-flex justify-content-end">Harga: Rp {{ accommodation['harga']
-                                                }}
-                                            </h4>
-                                        </div>
-                                        <div class="d-flex justify-content-start">
-                                            <a href="{{ url_for('accommodation_detail', accommodation_id=accommodation['_id']) }}"
-                                                class="btn btn-primary">Detail</a>
-                                            <a href="#" class="btn btn-danger"
-                                                onclick="deleteAccommodation('{{ accommodation['_id'] }}')">Delete</a>
-                                        </div>
-                                    </div>
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
+                                class="card-img-top" alt="gambar" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <div class="kepala">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                                        Denpasar </button>
+                                    <small class="text-body-secondary">Tersedia <b style="color: red;"> 2 unit
+                                        </b></small>
+                                </div>
+                                <div class="deskripsi">
+                                    <h4 class="card-title-bold">{{ accommodation['nama'] }}</h4>
+                                    <h6 class="card-text"><i class="" style="font-size:30px"></i>
+                                        {{ accommodation['lokasi'] }}</h6>
+                                    <br>
+                                    <h4 class="d-flex justify-content-end">Harga: Rp {{ accommodation['harga']
+                                        }}
+                                    </h4>
+                                </div>
+                                <div class="d-flex justify-content-start">
+                                    <a href="{{ url_for('accommodation_detail', accommodation_id=accommodation['_id']) }}"
+                                        class="btn btn-primary">Detail</a>
+                                    <a href="#" class="btn btn-danger"
+                                        onclick="deleteAccommodation('{{ accommodation['_id'] }}')">Delete</a>
                                 </div>
                             </div>
-                            {% endfor %}
                         </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-        </section>
+    </div>
+    </section>
     </div>
 
 
