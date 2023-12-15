@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['UPLOAD_FOLDER'] = './static/image_penginapan'
+app.config['UPLOAD_FOLDER'] = './static'
 
 SECRET_KEY = 'QWERTY1234'
 
@@ -340,6 +340,8 @@ def register_user():
         doc = {
             'username': username_receive,                              
             'password': password_hash,
+            'email':email_receive,
+            'profile_pic': ''
         }
 
         # Masukkan data ke database
@@ -601,6 +603,33 @@ def terima_pesanan(order_id):
         return jsonify({"result": "fail", "msg": "Token login telah kedaluwarsa."})
     except jwt.exceptions.DecodeError:
         return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
+    
+
+@app.route('/profile/<username>')
+def view_profile(username):
+    token_receive = request.cookies.get(TOKEN_KEY)
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+
+        if 'username' in payload and payload['username'] == username:
+            user_info = db.customer.find_one({"username": username})
+            
+            if user_info:
+                return render_template('profile_customer.html', user_info=user_info, logged_in=True)
+            else:
+                return render_template('profile_customer.html', msg='User not found.', logged_in=True)
+        else:
+            return render_template('profile_customer.html', msg='Unauthorized access.', logged_in=False)
+
+    except jwt.ExpiredSignatureError:
+        return render_template('profile_customer.html', msg='Token login has expired.', logged_in=False)
+    except jwt.exceptions.DecodeError:
+        return render_template('profile_customer.html', msg='Token decoding error.', logged_in=False)
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
