@@ -14,6 +14,8 @@ app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['UPLOAD_FOLDER'] = './static'
+app.config['PROFILE_IMAGES_FOLDER'] = './static/profile_images'
+app.config['BANNER_IMAGES_FOLDER'] = './static/banner_images'
 
 SECRET_KEY = 'QWERTY1234'
 
@@ -326,22 +328,22 @@ def register_user():
     # Jika methods POST
     if request.method == 'POST':
         username_receive = request.form.get('username_give')
+        email_receive = request.form.get('email_give')
         password_receive = request.form.get('password_give')
-        password2_receive = request.form.get('password2_give')
-
-        # Cek password apakah sudah sama dengan konfirmasi password
-        if password_receive != password2_receive:
-            return jsonify({'result': 'error', 'msg': 'Kata sandi dan konfirmasi tidak cocok!'})
 
         # Hashing password
         password_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
 
-        # Tambahkan data lainnya yg diperlukan user
+        # Data yang akan disimpan
         doc = {
-            'username': username_receive,                              
+            'username': username_receive,
+            'email': email_receive,
             'password': password_hash,
-            'email':email_receive,
-            'profile_pic': ''
+            'profile_pic': '',  
+            'profile_default': 'profile_images/default_profile.jpg',
+            'banner_pic': '' ,
+            'banner_default': 'banner_images/default_banner,jpg' ,
+
         }
 
         # Masukkan data ke database
@@ -349,7 +351,7 @@ def register_user():
 
         return jsonify({'result': 'success'})
 
-    #  Jika methods GET
+    # Jika methods GET
     msg = request.args.get('msg')
     return render_template('register_customer.html', msg=msg)
 
