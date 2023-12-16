@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['UPLOAD_FOLDER'] = './static'
+app.config['UPLOAD_FOLDER'] = './static/penginapan_images'
 app.config['PROFILE_IMAGES_FOLDER'] = './static/profile_images'
 app.config['BANNER_IMAGES_FOLDER'] = './static/banner_images'
 
@@ -32,7 +32,7 @@ def home():
     token_receive = request.cookies.get(TOKEN_KEY)
     accommodations = list(db.penginapan.find())
     if token_receive is None:
-        return render_template('index.html', logged_in=False, accommodations=accommodations )
+        return render_template('index.html', logged_in=False, accommodations=accommodations)
 
     try:
         # Lanjutkan dengan dekode token dan pengambilan data customer hanya jika token valid
@@ -41,7 +41,7 @@ def home():
             SECRET_KEY,
             algorithms=['HS256']
         )
-        
+
         # Pastikan payload memiliki id sebelum mencari data customer
         if 'username' in payload:
             user_info = db.customer.find_one({"username": payload['username']})
@@ -50,17 +50,14 @@ def home():
         else:
             # Jika payload tidak memiliki id, token tidak valid
             # raise jwt.exceptions.InvalidTokenError('Token tidak valid')
-            logged_in = False   
+            logged_in = False
             return render_template('index.html', logged_in=logged_in, accommodations=accommodations)
     except jwt.ExpiredSignatureError:
         msg = 'Token login anda sudah kedaluarsa!'
     except jwt.exceptions.DecodeError:
         msg = 'Terdapat masalah saat anda login!'
-        logged_in = False   
+        logged_in = False
     return render_template('index.html', msg=msg, logged_in=logged_in)
-
-
-
 
 
 # USER ADMIN
@@ -73,7 +70,8 @@ def login_admin():
         id_receive = request.form.get('id_give')
         password_receive = request.form.get('password_give')
 
-        password_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
+        password_hash = hashlib.sha256(
+            password_receive.encode("utf-8")).hexdigest()
 
         result = db.admin.find_one({
             'id': id_receive,
@@ -86,17 +84,17 @@ def login_admin():
                 "exp": datetime.utcnow() + timedelta(seconds=60 * 60 * 24),
             }
             token = jwt.encode(
-                payload, 
-                SECRET_KEY, 
+                payload,
+                SECRET_KEY,
                 algorithm='HS256'
             )
             return jsonify({
-                "result": "success", 
+                "result": "success",
                 "token": token
             })
         else:
             return jsonify({
-                "result": "fail", 
+                "result": "fail",
                 "msg": "Terdapat kesalahan pada ID atau Password anda!"
             })
 
@@ -133,10 +131,10 @@ def admin():
 def tambah_penginapan():
     if request.method == 'POST':
         token_receive = request.cookies.get(TOKEN_KEY)
-        try:     
+        try:
             payload = jwt.decode(
-                token_receive, 
-                SECRET_KEY, 
+                token_receive,
+                SECRET_KEY,
                 algorithms=["HS256"]
             )
 
@@ -147,11 +145,13 @@ def tambah_penginapan():
             harga = int(request.form.get('harga'))
             deskripsi = request.form.get('deskripsi')
 
-            tempat_wisata_terdekat = request.form.get('tempatWisata').split(',')
+            tempat_wisata_terdekat = request.form.get(
+                'tempatWisata').split(',')
 
-            gambar = request.files['gambar']  
+            gambar = request.files['gambar']
             gambar_filename = secure_filename(gambar.filename)
-            gambar.save(os.path.join(app.config['UPLOAD_FOLDER'], gambar_filename))
+            gambar.save(os.path.join(
+                app.config['UPLOAD_FOLDER'], gambar_filename))
 
             db.penginapan.insert_one({
                 'gambar': gambar_filename,
@@ -169,10 +169,10 @@ def tambah_penginapan():
             return redirect(url_for('admin'))
 
     token_receive = request.cookies.get(TOKEN_KEY)
-    try:     
+    try:
         payload = jwt.decode(
-            token_receive, 
-            SECRET_KEY, 
+            token_receive,
+            SECRET_KEY,
             algorithms=["HS256"]
         )
         return render_template('tambah_penginapan.html')
@@ -181,12 +181,12 @@ def tambah_penginapan():
         return redirect(url_for('admin'))
 
 
-
 @app.route('/delete/penginapan/<accommodation_id>', methods=['DELETE'])
 def delete_accommodation(accommodation_id):
     try:
         # Dapatkan nama file gambar sebelum menghapus akomodasi
-        accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
+        accommodation = db.penginapan.find_one(
+            {"_id": ObjectId(accommodation_id)})
         gambar_filename = accommodation.get('gambar', None)
 
         # Hapus akomodasi dari database
@@ -195,7 +195,8 @@ def delete_accommodation(accommodation_id):
         if result.deleted_count > 0:
             # Jika akomodasi berhasil dihapus, hapus juga file gambar
             if gambar_filename:
-                gambar_path = os.path.join(app.config['UPLOAD_FOLDER'], gambar_filename)
+                gambar_path = os.path.join(
+                    app.config['UPLOAD_FOLDER'], gambar_filename)
                 if os.path.exists(gambar_path):
                     os.remove(gambar_path)
 
@@ -205,10 +206,12 @@ def delete_accommodation(accommodation_id):
     except Exception as e:
         return jsonify({"result": "fail", "msg": str(e)})
 
+
 @app.route('/accommodation/<accommodation_id>')
 def accommodation_detail(accommodation_id):
     accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
     return render_template('detail_penginapan_admin.html', accommodation=accommodation)
+
 
 @app.route('/accommodation_customer/<accommodation_id>')
 def accommodation_detail_customer(accommodation_id):
@@ -230,12 +233,14 @@ def edit_penginapan(id):
         tempat_wisata_terdekat_list = tempat_wisata_terdekat.split(',')
 
         if 'gambar' in request.files:
-            gambar_lama_path = os.path.join(app.config['UPLOAD_FOLDER'], accommodation['gambar'])
+            gambar_lama_path = os.path.join(
+                app.config['UPLOAD_FOLDER'], accommodation['gambar'])
             os.remove(gambar_lama_path)
 
-            gambar_baru = request.files['gambar']  
+            gambar_baru = request.files['gambar']
             gambar_filename_baru = secure_filename(gambar_baru.filename)
-            gambar_baru.save(os.path.join(app.config['UPLOAD_FOLDER'], gambar_filename_baru))
+            gambar_baru.save(os.path.join(
+                app.config['UPLOAD_FOLDER'], gambar_filename_baru))
 
         db.penginapan.update_one(
             {"_id": ObjectId(id)},
@@ -268,7 +273,7 @@ def cek_pesanan_admin():
 
         if 'id' in payload:
             user_info = db.admin.find_one({"id": payload["id"]})
-            orders = list (db.pesanan.find())
+            orders = list(db.pesanan.find())
             return render_template('cek_pesanan_admin.html', orders=orders)
         else:
             return redirect(url_for("login_admin", msg="Silahkan login!"))
@@ -276,7 +281,6 @@ def cek_pesanan_admin():
         return redirect(url_for("login_admin", msg="Token login anda sudah kedaluarsa!"))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login_admin", msg="Terdapat masalah saat anda login!"))
-
 
 
 # USER CUSTOMER
@@ -289,7 +293,8 @@ def login_user():
         username_receive = request.form.get('username_give')
         password_receive = request.form.get('password_give')
 
-        password_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
+        password_hash = hashlib.sha256(
+            password_receive.encode("utf-8")).hexdigest()
 
         result = db.customer.find_one({
             'username': username_receive,
@@ -298,7 +303,7 @@ def login_user():
 
         if result is not None:
             payload = {
-                
+
                 "username": username_receive,
                 "exp": datetime.utcnow() + timedelta(seconds=60 * 60 * 24),
             }
@@ -308,12 +313,12 @@ def login_user():
                 algorithm='HS256'
             )
             return jsonify({
-                "result": "success", 
+                "result": "success",
                 "token": token
             })
         else:
             return jsonify({
-                "result": "fail", 
+                "result": "fail",
                 "msg": "Terdapat kesalahan pada username atau Password anda!"
             })
 
@@ -339,11 +344,11 @@ def register_user():
             'username': username_receive,
             'email': email_receive,
             'password': password_hash,
-            'profile_pic': '',  
-            'profile_default': 'profile_images/default_profile.jpg',
-            'banner_pic': '' ,
-            'banner_default': 'banner_images/default_banner,jpg' ,
-
+            'nama': username_receive,
+            'profile_pic': '',
+            'profile_pic_real': 'profile_images/default_profile.jpg',
+            'banner_pic': '',
+            'banner_pic_real': 'banner_images/default_banner.jpg',
         }
 
         # Masukkan data ke database
@@ -362,7 +367,7 @@ def pencarian():
     pencarian = request.args.get('pencarian')
 
     accommodations_per_page = 3
-   
+
     page = request.args.get('page', 1, type=int)
 
     start_index = (page - 1) * accommodations_per_page
@@ -380,7 +385,8 @@ def pencarian():
 
     paginated_accommodations = all_accommodations[start_index:end_index]
 
-    total_pages = (len(all_accommodations) + accommodations_per_page - 1) // accommodations_per_page
+    total_pages = (len(all_accommodations) +
+                   accommodations_per_page - 1) // accommodations_per_page
 
     if token_receive:
         try:
@@ -391,7 +397,8 @@ def pencarian():
             )
             if 'username' in payload:
                 login_in = True
-                user_info = db.customer.find_one({"username": payload['username']})
+                user_info = db.customer.find_one(
+                    {"username": payload['username']})
                 return render_template('pencarian_customer.html', accommodations=paginated_accommodations, current_page=page, total_pages=total_pages, logged_in=login_in, user_info=user_info)
 
         except jwt.ExpiredSignatureError:
@@ -442,7 +449,8 @@ def pesan_accommodation(accommodation_id):
         tgl_pesan = request.form.get('tgl_pesan')
         total_harga = int(request.form.get('total_harga'))
 
-        accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
+        accommodation = db.penginapan.find_one(
+            {"_id": ObjectId(accommodation_id)})
         if accommodation:
             sisa_kamar = accommodation['jumlah_kamar'] - jumlah_kamar
             if sisa_kamar >= 0:
@@ -474,6 +482,7 @@ def pesan_accommodation(accommodation_id):
     except jwt.exceptions.DecodeError:
         return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
 
+
 @app.route('/cekpesanan/<username>')
 def user_orders(username):
     token_receive = request.cookies.get(TOKEN_KEY)
@@ -487,17 +496,19 @@ def user_orders(username):
             )
             if 'username' in payload:
                 login_in = True
-                user_info = db.customer.find_one({"username": payload['username']})
+                user_info = db.customer.find_one(
+                    {"username": payload['username']})
                 return render_template('cek_pesanan_customer.html', user_orders=user_orders, user_info=user_info, logged_in=login_in)
         except jwt.ExpiredSignatureError:
             return jsonify({"result": "fail", "msg": "Token login has expired."})
         except jwt.exceptions.DecodeError:
             return jsonify({"result": "fail", "msg": "Token decoding error."})
 
+
 @app.route('/batal/pesanan/<order_id>', methods=['POST'])
 def batalkan_pesanan(order_id):
     token_receive = request.cookies.get(TOKEN_KEY)
-    
+
     if not token_receive:
         return jsonify({"result": "fail", "msg": "Silakan login untuk membatalkan pesanan."})
 
@@ -548,10 +559,11 @@ def batalkan_pesanan(order_id):
     except jwt.exceptions.DecodeError:
         return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
 
+
 @app.route('/hapus/pesanan/<order_id>', methods=['POST'])
 def hapus_pesanan(order_id):
     token_receive = request.cookies.get(TOKEN_KEY)
-    
+
     if not token_receive:
         return jsonify({"result": "fail", "msg": "Silakan login untuk menghapus pesanan."})
 
@@ -605,12 +617,11 @@ def terima_pesanan(order_id):
         return jsonify({"result": "fail", "msg": "Token login telah kedaluwarsa."})
     except jwt.exceptions.DecodeError:
         return jsonify({"result": "fail", "msg": "Kesalahan pada saat melakukan dekode token."})
-    
+
 
 @app.route('/profile/<username>')
 def view_profile(username):
     token_receive = request.cookies.get(TOKEN_KEY)
-
     try:
         payload = jwt.decode(
             token_receive,
@@ -620,7 +631,7 @@ def view_profile(username):
 
         if 'username' in payload and payload['username'] == username:
             user_info = db.customer.find_one({"username": username})
-            
+
             if user_info:
                 return render_template('profile_customer.html', user_info=user_info, logged_in=True)
             else:
@@ -633,6 +644,94 @@ def view_profile(username):
     except jwt.exceptions.DecodeError:
         return render_template('profile_customer.html', msg='Token decoding error.', logged_in=False)
 
-if __name__ == '__main__':
-    app.run('0.0.0.0', port=5000, debug=True)
 
+# Fungsi edit_profile
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    token_receive = request.cookies.get(TOKEN_KEY)
+    if token_receive:
+        try:
+            payload = jwt.decode(
+                token_receive,
+                SECRET_KEY,
+                algorithms=['HS256']
+            )
+
+            if 'username' in payload:
+                user_info = db.customer.find_one({"username": payload['username']})
+                if user_info:
+                    if request.method == 'POST':
+                        # Mengambil data yang diperbarui dari formulir
+                        updated_name = request.form.get('name_give')
+                        updated_email = request.form.get('email_give')
+
+                        # Buta penyimpanan baru untuk data
+                        new_doc = {
+                            "nama": updated_name,
+                            "email": updated_email
+                        }
+
+                        # if "profile_give" in request.files:
+                        #     file = request.files.get('profile_give')
+                        #     filename = secure_filename(file.filename)
+                        #     extension = filename.split(".")[-1]
+                        #     file_path = f"profile_images/{payload['username']}.{extension}"
+                        #     file.save(os.path.join(app.config['PROFILE_IMAGES_FOLDER'], file_path))
+                        #     new_doc["profile_pic"] = filename
+                        #     new_doc["profile_pic_real"] = file_path
+
+                        # if "banner_give" in request.files:
+                        #     file = request.files.get('banner_give')
+                        #     filename = secure_filename(file.filename)
+                        #     extension = filename.split(".")[-1]
+                        #     file_path = f"banner_images/{payload['username']}.{extension}"
+                        #     file.save(os.path.join(app.config['BANNER_IMAGES_FOLDER'], file_path))
+                        #     new_doc["banner_pic"] = filename
+                        #     new_doc["banner_pic_real"] = file_path
+
+                        if "profile_give" in request.files:
+                            file = request.files.get('profile_give')
+                            filename = secure_filename(file.filename)
+                            extension = filename.split(".")[-1]
+                            file_path = os.path.join(app.config['PROFILE_IMAGES_FOLDER'], f"{payload['username']}_profile.{extension}")
+                            file.save(file_path)
+                            new_doc["profile_pic"] = filename
+                            new_doc["profile_pic_real"] =  file_path.replace(app.config['PROFILE_IMAGES_FOLDER'], 'profile_images').replace("\\", "/")
+
+                        if "banner_give" in request.files:
+                            file = request.files.get('banner_give')
+                            filename = secure_filename(file.filename)
+                            extension = filename.split(".")[-1]
+                            file_path = os.path.join(app.config['BANNER_IMAGES_FOLDER'], f"{payload['username']}_banner.{extension}")
+                            file.save(file_path)
+                            new_doc["banner_pic"] = filename
+
+                            # Ubah path sebelum disimpan ke database
+                            new_doc["banner_pic_real"] = file_path.replace(app.config['BANNER_IMAGES_FOLDER'], 'banner_images').replace("\\", "/")
+
+                        # Update data pengguna di database
+                        db.customer.update_one(
+                            {"username": payload['username']},
+                            {"$set": new_doc}
+                        )
+                        # Redirect ke halaman profil setelah pembaruan
+                        return redirect(url_for('view_profile', username=payload['username']))
+                    else:
+                        # Tampilkan halaman edit profile jika request method adalah GET
+                        return render_template('edit_profile_customer.html', user_info=user_info)
+                else:
+                    return render_template('edit_profile_customer.html', msg='User not found.')
+            else:
+                return render_template('edit_profile_customer.html', msg='Unauthorized access.')
+
+        except jwt.ExpiredSignatureError:
+            return render_template('edit_profile_customer.html', msg='Token login has expired.')
+        except jwt.exceptions.DecodeError:
+            return render_template('edit_profile_customer.html', msg='Token decoding error.')
+    else:
+        # Redirect ke halaman login jika tidak ada token
+        return redirect(url_for('login_user'))
+
+
+if __name__ == '__main__':  
+    app.run('0.0.0.0', port=5000, debug=True)
