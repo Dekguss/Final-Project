@@ -43,6 +43,7 @@
     font-size: 18px;
 }
 
+
 .btn-custom:hover {
     color: white;
     background-color: #40788e;
@@ -80,4 +81,21 @@
 
 .content {
     margin-top: 150px;
+}
+
+.wrapper-cards {
+    justify-content: center;
+}
+
+#card-content{
+    transition: all 0.3s;
+}
+
+#cards-content:hover  {  
+    transform: scale(1.15);
+    z-index: 10;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 5px;
+    border-color: #ABCED8
 }
