@@ -235,9 +235,9 @@ def edit_penginapan(penginapan_id):
 
         # Pengecekan ID di payload
         if 'id' in payload:
-            penginapan = db.penginapan.find_one({"_id": ObjectId(penginapan_id)})
+            # Ambil data penginapan berdasarkan ID
+            penginapan = db.penginapan.find_one({'_id': ObjectId(penginapan_id)})
 
-            # Jika method POST
             if request.method == 'POST':
                 # Mengambil data dari form
                 nama_penginapan = request.form.get('namaPenginapan')
@@ -245,45 +245,51 @@ def edit_penginapan(penginapan_id):
                 jumlah_kamar = int(request.form.get('jumlahKamar'))
                 harga = int(request.form.get('harga'))
                 deskripsi = request.form.get('deskripsi')
-                tempat_wisata_terdekat = request.form.get('tempatWisata')
+                tempat_wisata_terdekat = request.form.get('tempatWisata').split(',')
 
-                tempat_wisata_terdekat_list = tempat_wisata_terdekat.split(',')
+                file_path = penginapan['gambar']  # Gunakan gambar lama secara default
 
+                # Jika gambar diubah
                 if "gambar" in request.files:
-                    gambar_lama_path = os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], penginapan['gambar'])
-                    os.remove(gambar_lama_path)
+                    file = request.files.get('gambar')
+                    
+                    # Jika file tidak kosong
+                    if file.filename:
+                        filename = secure_filename(file.filename)
+                        extension = filename.split(".")[-1]
+                        new_filename = f"{nama_penginapan.replace(' ', '_').lower()}_penginapan.{extension}"
+                        file_path = new_filename
+                        file.save(os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], new_filename))
 
-                    gambar_baru = request.files['gambar']
-                    gambar_filename_baru = secure_filename(gambar_baru.filename)
-                    extension = filename.split(".")[-1]
+                        # Hapus gambar lama jika ada
+                        if penginapan['gambar']:
+                            os.remove(os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], penginapan['gambar']))
 
-                    gambar_baru = f"{nama_penginapan.replace(' ', '_').lower()}_penginapan.{extension}"
-                    file_path = gambar_baru 
-                    file.save(os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], gambar_baru))
-
-                # Update data pada database
+                # Update penginapan pada database
                 db.penginapan.update_one(
-                    {"_id": ObjectId(penginapan_id)},
-                    {"$set": {
-                        'gambar': gambar_baru,
-                        'nama': nama_penginapan,
-                        'lokasi': lokasi,
-                        'jumlah_kamar': jumlah_kamar,
-                        'harga': harga,
-                        'deskripsi': deskripsi,
-                        'tempat_wisata_terdekat': tempat_wisata_terdekat_list,
-                    }}
+                    {'_id': ObjectId(penginapan_id)},
+                    {
+                        '$set': {
+                            'gambar': file_path,
+                            'nama': nama_penginapan,
+                            'lokasi': lokasi,
+                            'jumlah_kamar': jumlah_kamar,
+                            'harga': harga,
+                            'deskripsi': deskripsi,
+                            'tempat_wisata_terdekat': tempat_wisata_terdekat,
+                        }
+                    }
                 )
 
-                return redirect(url_for('penginapan_detail_admin', penginapan_id=penginapan_id))
+                # Kembali ke halaman dashboard admin setelah berhasil edit
+                return redirect('/admin')
 
-            # Jika method GET maka akan dibawa ke halaman edit penginapan
+            # Jika method GET, tampilkan halaman edit dengan data penginapan
             else:
                 return render_template('edit_penginapan_admin.html', penginapan=penginapan)
 
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for('admin'))
-
 
 @app.route('/cekpesanan/admin')
 def cek_pesanan_admin():
