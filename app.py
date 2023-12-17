@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['UPLOAD_FOLDER'] = './static/penginapan_images'
+app.config['UPLOAD_FOLDER'] = './static/image_penginapan'
 app.config['PROFILE_IMAGES_FOLDER'] = './static/profile_images'
 app.config['BANNER_IMAGES_FOLDER'] = './static/banner_images'
 
@@ -145,13 +145,11 @@ def tambah_penginapan():
             harga = int(request.form.get('harga'))
             deskripsi = request.form.get('deskripsi')
 
-            tempat_wisata_terdekat = request.form.get(
-                'tempatWisata').split(',')
+            tempat_wisata_terdekat = request.form.get('tempatWisata').split(',')
 
             gambar = request.files['gambar']
             gambar_filename = secure_filename(gambar.filename)
-            gambar.save(os.path.join(
-                app.config['UPLOAD_FOLDER'], gambar_filename))
+            gambar.save(os.path.join(app.config['UPLOAD_FOLDER'], gambar_filename))
 
             db.penginapan.insert_one({
                 'gambar': gambar_filename,
@@ -287,7 +285,7 @@ def cek_pesanan_admin():
 
 # Login Customer
 @app.route('/login/user', methods=['GET', 'POST'])
-def login_user():
+def login_customer():
     # Jika methods POST
     if request.method == 'POST':
         username_receive = request.form.get('username_give')
@@ -337,7 +335,8 @@ def register_user():
         password_receive = request.form.get('password_give')
 
         # Hashing password
-        password_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
+        password_hash = hashlib.sha256(
+            password_receive.encode("utf-8")).hexdigest()
 
         # Data yang akan disimpan
         doc = {
@@ -628,110 +627,145 @@ def view_profile(username):
             SECRET_KEY,
             algorithms=['HS256']
         )
-
+        # Pengecekan username di payload
         if 'username' in payload and payload['username'] == username:
+            # Find username pada database
             user_info = db.customer.find_one({"username": username})
 
-            if user_info:
-                return render_template('profile_customer.html', user_info=user_info, logged_in=True)
-            else:
-                return render_template('profile_customer.html', msg='User not found.', logged_in=True)
-        else:
-            return render_template('profile_customer.html', msg='Unauthorized access.', logged_in=False)
+            return render_template('profile_customer.html', user_info=user_info)
 
     except jwt.ExpiredSignatureError:
-        return render_template('profile_customer.html', msg='Token login has expired.', logged_in=False)
+        return redirect(url_for("login_customer", msg="Token login anda sudah kedaluarsa!"))
     except jwt.exceptions.DecodeError:
-        return render_template('profile_customer.html', msg='Token decoding error.', logged_in=False)
+        return redirect(url_for("login_customer", msg="Terdapat masalah saat anda login!"))
 
 
-# Fungsi edit_profile
+
+# Edit Profile Customer
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     token_receive = request.cookies.get(TOKEN_KEY)
-    if token_receive:
-        try:
-            payload = jwt.decode(
-                token_receive,
-                SECRET_KEY,
-                algorithms=['HS256']
-            )
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
 
-            if 'username' in payload:
-                user_info = db.customer.find_one({"username": payload['username']})
-                if user_info:
-                    if request.method == 'POST':
-                        # Mengambil data yang diperbarui dari formulir
-                        updated_name = request.form.get('name_give')
-                        updated_email = request.form.get('email_give')
+        # Pengecekan username di payload
+        if 'username' in payload:
+            user_info = db.customer.find_one({"username": payload['username']})
 
-                        # Buta penyimpanan baru untuk data
-                        new_doc = {
-                            "nama": updated_name,
-                            "email": updated_email
-                        }
+            # Jika method POST
+            if request.method == 'POST':
+                # Mengambil data yang diperbarui dari form
+                updated_name = request.form.get('name_give')
+                updated_email = request.form.get('email_give')
 
-                        # if "profile_give" in request.files:
-                        #     file = request.files.get('profile_give')
-                        #     filename = secure_filename(file.filename)
-                        #     extension = filename.split(".")[-1]
-                        #     file_path = f"profile_images/{payload['username']}.{extension}"
-                        #     file.save(os.path.join(app.config['PROFILE_IMAGES_FOLDER'], file_path))
-                        #     new_doc["profile_pic"] = filename
-                        #     new_doc["profile_pic_real"] = file_path
+                # Mendapatkan path file gambar lama (jika ada) untuk profil dan banner
+                old_profile_pic_path = os.path.join(app.config['PROFILE_IMAGES_FOLDER'], user_info.get('profile_pic', ''))
+                old_banner_pic_path = os.path.join(app.config['BANNER_IMAGES_FOLDER'], user_info.get('banner_pic', ''))
 
-                        # if "banner_give" in request.files:
-                        #     file = request.files.get('banner_give')
-                        #     filename = secure_filename(file.filename)
-                        #     extension = filename.split(".")[-1]
-                        #     file_path = f"banner_images/{payload['username']}.{extension}"
-                        #     file.save(os.path.join(app.config['BANNER_IMAGES_FOLDER'], file_path))
-                        #     new_doc["banner_pic"] = filename
-                        #     new_doc["banner_pic_real"] = file_path
+                # Buat penyimpanan baru untuk data
+                new_doc = {
+                    "nama": updated_name,
+                    "email": updated_email
+                }
 
-                        if "profile_give" in request.files:
-                            file = request.files.get('profile_give')
-                            filename = secure_filename(file.filename)
-                            extension = filename.split(".")[-1]
-                            file_path = os.path.join(app.config['PROFILE_IMAGES_FOLDER'], f"{payload['username']}_profile.{extension}")
-                            file.save(file_path)
-                            new_doc["profile_pic"] = filename
-                            new_doc["profile_pic_real"] =  file_path.replace(app.config['PROFILE_IMAGES_FOLDER'], 'profile_images').replace("\\", "/")
+                if "profile_give" in request.files:
+                    # Menghapus gambar lama profil sebelum menyimpan yang baru
+                    if os.path.exists(old_profile_pic_path):
+                        os.remove(old_profile_pic_path)
 
-                        if "banner_give" in request.files:
-                            file = request.files.get('banner_give')
-                            filename = secure_filename(file.filename)
-                            extension = filename.split(".")[-1]
-                            file_path = os.path.join(app.config['BANNER_IMAGES_FOLDER'], f"{payload['username']}_banner.{extension}")
-                            file.save(file_path)
-                            new_doc["banner_pic"] = filename
+                    file = request.files.get('profile_give')
+                    filename = secure_filename(file.filename)
+                    extension = filename.split(".")[-1]
+                    file_path = os.path.join(app.config['PROFILE_IMAGES_FOLDER'], f"{payload['username']}_profile.{extension}")
+                    file.save(file_path)
+                    new_doc["profile_pic"] = filename
+                    new_doc["profile_pic_real"] = file_path.replace(app.config['PROFILE_IMAGES_FOLDER'], 'profile_images').replace("\\", "/")
 
-                            # Ubah path sebelum disimpan ke database
-                            new_doc["banner_pic_real"] = file_path.replace(app.config['BANNER_IMAGES_FOLDER'], 'banner_images').replace("\\", "/")
+                if "banner_give" in request.files:
+                    # Menghapus gambar lama banner sebelum menyimpan yang baru
+                    if os.path.exists(old_banner_pic_path):
+                        os.remove(old_banner_pic_path)
 
-                        # Update data pengguna di database
-                        db.customer.update_one(
-                            {"username": payload['username']},
-                            {"$set": new_doc}
-                        )
-                        # Redirect ke halaman profil setelah pembaruan
-                        return redirect(url_for('view_profile', username=payload['username']))
-                    else:
-                        # Tampilkan halaman edit profile jika request method adalah GET
-                        return render_template('edit_profile_customer.html', user_info=user_info)
-                else:
-                    return render_template('edit_profile_customer.html', msg='User not found.')
+                    file = request.files.get('banner_give')  # Mengambil data dari file yang diupload
+                    filename = secure_filename(file.filename) # Bersihkan nama file
+                    extension = filename.split(".")[-1]
+                    # Simpan pada folder
+                    file_path = os.path.join(app.config['BANNER_IMAGES_FOLDER'], f"{payload['username']}_banner.{extension}")
+                    file.save(file_path)
+
+                    # Tambahkan ke new_doc
+                    new_doc["banner_pic"] = filename
+                    new_doc["banner_pic_real"] = file_path.replace(app.config['BANNER_IMAGES_FOLDER'], 'banner_images').replace("\\", "/")
+
+                # Update data pengguna di database
+                db.customer.update_one(
+                    {"username": payload['username']},
+                    {"$set": new_doc}
+                )
+
+                # Redirect ke halaman profil setelah pembaruan
+                return redirect(url_for('view_profile', username=payload['username']))
+
+            # Jika method GET maka tampilkan halaman edit profile 
             else:
-                return render_template('edit_profile_customer.html', msg='Unauthorized access.')
-
-        except jwt.ExpiredSignatureError:
-            return render_template('edit_profile_customer.html', msg='Token login has expired.')
-        except jwt.exceptions.DecodeError:
-            return render_template('edit_profile_customer.html', msg='Token decoding error.')
-    else:
-        # Redirect ke halaman login jika tidak ada token
-        return redirect(url_for('login_user'))
+                return render_template('edit_profile_customer.html', user_info=user_info)
+                
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login_customer", msg="Token login anda sudah kedaluarsa!"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login_customer", msg="Terdapat masalah saat anda login!"))
 
 
-if __name__ == '__main__':  
+
+# Ganti Password Customer
+@app.route('/ganti_password', methods=['GET', 'POST'])
+def ganti_password():
+    token_receive = request.cookies.get(TOKEN_KEY)
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+
+        # Pengecekan username di payload
+        if 'username' in payload:
+            user_info = db.customer.find_one({"username": payload['username']})
+
+            # Jika method POST
+            if request.method == 'POST':
+                # Mengambil data yang diperbarui dari form
+                old_password = request.form.get('oldPass_give')
+                new_password = request.form.get('newPass_give')
+
+                # Cek apakah password lama yang di database sama dengan yang diinputkan
+                if hashlib.sha256(old_password.encode('utf-8')).hexdigest() == user_info['password']:
+                    # Hashing password baru
+                    hash_password = hashlib.sha256(new_password.encode('utf-8')).hexdigest()
+
+                    # Update data pada database
+                    db.customer.update_one(
+                        {"username": payload['username']},
+                        {"$set": {'password': hash_password}}
+                    )
+
+                    return jsonify({'status': 'success', 'msg': 'Password berhasil diperbarui!'})
+                else:
+                    return jsonify({'status': 'error', 'msg': 'Password lama tidak sesuai.'})
+
+             # Jika method GET maka tampilkan halaman ganti password 
+            else:
+                return render_template('ganti_password.html', user_info=user_info)
+
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login_customer", msg="Token login anda sudah kedaluarsa!"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login_customer", msg="Terdapat masalah saat anda login!"))
+
+
+if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
