@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['UPLOAD_FOLDER'] = './static/image_penginapan'
+app.config['PENGINAPAN_IMAGES_FOLDER'] = './static/penginapan_images'
 app.config['PROFILE_IMAGES_FOLDER'] = './static/profile_images'
 app.config['BANNER_IMAGES_FOLDER'] = './static/banner_images'
 
@@ -30,9 +30,10 @@ TOKEN_KEY = 'mytoken'
 @app.route('/')
 def home():
     token_receive = request.cookies.get(TOKEN_KEY)
-    accommodations = list(db.penginapan.find())
+    penginapan = list(db.penginapan.find())
     if token_receive is None:
-        return render_template('index.html', logged_in=False, accommodations=accommodations)
+        logged_in=False
+        return render_template('index.html', logged_in=logged_in, penginapan=penginapan)
 
     try:
         # Lanjutkan dengan dekode token dan pengambilan data customer hanya jika token valid
@@ -46,12 +47,12 @@ def home():
         if 'username' in payload:
             user_info = db.customer.find_one({"username": payload['username']})
             logged_in = True
-            return render_template('index.html', user_info=user_info, logged_in=logged_in, accommodations=accommodations)
+            return render_template('index.html', user_info=user_info, logged_in=logged_in, penginapan=penginapan)
         else:
             # Jika payload tidak memiliki id, token tidak valid
             # raise jwt.exceptions.InvalidTokenError('Token tidak valid')
             logged_in = False
-            return render_template('index.html', logged_in=logged_in, accommodations=accommodations)
+            return render_template('index.html', logged_in=logged_in, penginapan=penginapan)
     except jwt.ExpiredSignatureError:
         msg = 'Token login anda sudah kedaluarsa!'
     except jwt.exceptions.DecodeError:
@@ -115,12 +116,12 @@ def admin():
             algorithms=['HS256']
         )
 
+        # Pengecekan ID di payload
         if 'id' in payload:
             user_info = db.admin.find_one({"id": payload["id"]})
-            accommodations = list(db.penginapan.find())
-            return render_template("dasboard_admin.html", user_info=user_info, accommodations=accommodations)
-        else:
-            return redirect(url_for("login_admin", msg="Silahkan login!"))
+            penginapan = list(db.penginapan.find()) # Mengambil data penginapan dari database
+            return render_template("dasboard_admin.html", user_info=user_info, penginapan=penginapan)
+   
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login_admin", msg="Token login anda sudah kedaluarsa!"))
     except jwt.exceptions.DecodeError:
@@ -129,133 +130,159 @@ def admin():
 
 @app.route('/tambah/penginapan', methods=['GET', 'POST'])
 def tambah_penginapan():
-    if request.method == 'POST':
-        token_receive = request.cookies.get(TOKEN_KEY)
-        try:
-            payload = jwt.decode(
-                token_receive,
-                SECRET_KEY,
-                algorithms=["HS256"]
-            )
-
-            user_info = db.admin.find_one({"id": payload["id"]})
-            nama_penginapan = request.form.get('namaPenginapan')
-            lokasi = request.form.get('lokasi')
-            jumlah_kamar = int(request.form.get('jumlahKamar'))
-            harga = int(request.form.get('harga'))
-            deskripsi = request.form.get('deskripsi')
-
-            tempat_wisata_terdekat = request.form.get('tempatWisata').split(',')
-
-            gambar = request.files['gambar']
-            gambar_filename = secure_filename(gambar.filename)
-            gambar.save(os.path.join(app.config['UPLOAD_FOLDER'], gambar_filename))
-
-            db.penginapan.insert_one({
-                'gambar': gambar_filename,
-                'nama': nama_penginapan,
-                'lokasi': lokasi,
-                'jumlah_kamar': jumlah_kamar,
-                'harga': harga,
-                'deskripsi': deskripsi,
-                'tempat_wisata_terdekat': tempat_wisata_terdekat,
-            })
-
-            return redirect('/admin')
-
-        except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-            return redirect(url_for('admin'))
-
     token_receive = request.cookies.get(TOKEN_KEY)
+
     try:
         payload = jwt.decode(
             token_receive,
             SECRET_KEY,
-            algorithms=["HS256"]
+            algorithms=['HS256']
         )
-        return render_template('tambah_penginapan.html')
+
+        # Pengecekan ID di payload
+        if 'id' in payload:
+            # Jika method POST
+            if request.method == 'POST':
+                # Mengambil data dari form
+                nama_penginapan = request.form.get('namaPenginapan')
+                lokasi = request.form.get('lokasi')
+                jumlah_kamar = int(request.form.get('jumlahKamar'))
+                harga = int(request.form.get('harga'))
+                deskripsi = request.form.get('deskripsi')
+                tempat_wisata_terdekat = request.form.get('tempatWisata').split(',')
+
+                file_path = None 
+
+                if "gambar" in request.files:
+                    file = request.files.get('gambar')  # Mengambil data dari file yang diupload
+                    filename = secure_filename(file.filename) # Bersihkan nama file
+                    extension = filename.split(".")[-1]
+                    # Simpan pada folder
+                    new_filename = f"{nama_penginapan.replace(' ', '_').lower()}_penginapan.{extension}"
+                    file_path = new_filename 
+                    file.save(os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], new_filename))
+                
+                # Tambahkan penginapan pada databse
+                db.penginapan.insert_one({
+                    'gambar': file_path,
+                    'nama': nama_penginapan,
+                    'lokasi': lokasi,
+                    'jumlah_kamar': jumlah_kamar,
+                    'harga': harga,
+                    'deskripsi': deskripsi,
+                    'tempat_wisata_terdekat': tempat_wisata_terdekat,
+                })
+
+                # Kembali ke halaman dashboard admin
+                return redirect('/admin')
+            # Jika method GET maka akan dibawa ke halaman tambah penginapan
+            else:
+                return render_template('tambah_penginapan.html')
 
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for('admin'))
 
 
-@app.route('/delete/penginapan/<accommodation_id>', methods=['DELETE'])
-def delete_accommodation(accommodation_id):
+@app.route('/delete/penginapan/<penginapan_id>', methods=['DELETE'])
+def hapus_penginapan(penginapan_id):
+    token_receive = request.cookies.get(TOKEN_KEY)
+
     try:
-        # Dapatkan nama file gambar sebelum menghapus akomodasi
-        accommodation = db.penginapan.find_one(
-            {"_id": ObjectId(accommodation_id)})
-        gambar_filename = accommodation.get('gambar', None)
-
-        # Hapus akomodasi dari database
-        result = db.penginapan.delete_one({"_id": ObjectId(accommodation_id)})
-
-        if result.deleted_count > 0:
-            # Jika akomodasi berhasil dihapus, hapus juga file gambar
-            if gambar_filename:
-                gambar_path = os.path.join(
-                    app.config['UPLOAD_FOLDER'], gambar_filename)
-                if os.path.exists(gambar_path):
-                    os.remove(gambar_path)
-
-            return jsonify({"result": "success"})
-        else:
-            return jsonify({"result": "fail", "msg": "Accommodation not found"})
-    except Exception as e:
-        return jsonify({"result": "fail", "msg": str(e)})
-
-
-@app.route('/accommodation/<accommodation_id>')
-def accommodation_detail(accommodation_id):
-    accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
-    return render_template('detail_penginapan_admin.html', accommodation=accommodation)
-
-
-@app.route('/accommodation_customer/<accommodation_id>')
-def accommodation_detail_customer(accommodation_id):
-    accommodation = db.penginapan.find_one({"_id": ObjectId(accommodation_id)})
-    return render_template('detail_penginapan_customer.html', accommodation=accommodation)
-
-
-@app.route('/edit_penginapan/<id>', methods=['GET', 'POST'])
-def edit_penginapan(id):
-    accommodation = db.penginapan.find_one({"_id": ObjectId(id)})
-
-    if request.method == 'POST':
-        nama_penginapan = request.form.get('namaPenginapan')
-        lokasi = request.form.get('lokasi')
-        jumlah_kamar = int(request.form.get('jumlahKamar'))
-        harga = int(request.form.get('harga'))
-        deskripsi = request.form.get('deskripsi')
-        tempat_wisata_terdekat = request.form.get('tempatWisata')
-        tempat_wisata_terdekat_list = tempat_wisata_terdekat.split(',')
-
-        if 'gambar' in request.files:
-            gambar_lama_path = os.path.join(
-                app.config['UPLOAD_FOLDER'], accommodation['gambar'])
-            os.remove(gambar_lama_path)
-
-            gambar_baru = request.files['gambar']
-            gambar_filename_baru = secure_filename(gambar_baru.filename)
-            gambar_baru.save(os.path.join(
-                app.config['UPLOAD_FOLDER'], gambar_filename_baru))
-
-        db.penginapan.update_one(
-            {"_id": ObjectId(id)},
-            {"$set": {
-                'gambar': gambar_filename_baru,
-                'nama': nama_penginapan,
-                'lokasi': lokasi,
-                'jumlah_kamar': jumlah_kamar,
-                'harga': harga,
-                'deskripsi': deskripsi,
-                'tempat_wisata_terdekat': tempat_wisata_terdekat_list,
-            }}
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
         )
 
-        return redirect(url_for('accommodation_detail', accommodation_id=id))
+        # Pengecekan ID di payload
+        if 'id' in payload:
+            # Dapatkan nama file gambar sebelum menghapus penginapan
+            penginapan = db.penginapan.find_one({"_id": ObjectId(penginapan_id)})
+            gambar_filename = penginapan.get('gambar', None)
 
-    return render_template('edit_penginapan_admin.html', accommodation=accommodation)
+            # Hapus penginapan dari database
+            result = db.penginapan.delete_one({"_id": ObjectId(penginapan_id)})
+
+            if result.deleted_count > 0:
+                # Jika penginapan berhasil dihapus, hapus juga file gambar
+                if gambar_filename:
+                    gambar_path = os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], gambar_filename)
+                    if os.path.exists(gambar_path):
+                        os.remove(gambar_path)
+                return jsonify({"result": "success"})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for('admin'))
+
+
+@app.route('/penginapan/<penginapan_id>')
+def penginapan_detail_admin(penginapan_id):
+    # Mengambil data penginapan dari database
+    penginapan = db.penginapan.find_one({"_id": ObjectId(penginapan_id)})
+    return render_template('detail_penginapan_admin.html', penginapan=penginapan)
+
+
+@app.route('/edit_penginapan/<penginapan_id>', methods=['GET', 'POST'])
+def edit_penginapan(penginapan_id):
+    token_receive = request.cookies.get(TOKEN_KEY)
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+
+        # Pengecekan ID di payload
+        if 'id' in payload:
+            penginapan = db.penginapan.find_one({"_id": ObjectId(penginapan_id)})
+
+            # Jika method POST
+            if request.method == 'POST':
+                # Mengambil data dari form
+                nama_penginapan = request.form.get('namaPenginapan')
+                lokasi = request.form.get('lokasi')
+                jumlah_kamar = int(request.form.get('jumlahKamar'))
+                harga = int(request.form.get('harga'))
+                deskripsi = request.form.get('deskripsi')
+                tempat_wisata_terdekat = request.form.get('tempatWisata')
+
+                tempat_wisata_terdekat_list = tempat_wisata_terdekat.split(',')
+
+                if "gambar" in request.files:
+                    gambar_lama_path = os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], penginapan['gambar'])
+                    os.remove(gambar_lama_path)
+
+                    gambar_baru = request.files['gambar']
+                    gambar_filename_baru = secure_filename(gambar_baru.filename)
+                    extension = filename.split(".")[-1]
+
+                    gambar_baru = f"{nama_penginapan.replace(' ', '_').lower()}_penginapan.{extension}"
+                    file_path = gambar_baru 
+                    file.save(os.path.join(app.config['PENGINAPAN_IMAGES_FOLDER'], gambar_baru))
+
+                # Update data pada database
+                db.penginapan.update_one(
+                    {"_id": ObjectId(penginapan_id)},
+                    {"$set": {
+                        'gambar': gambar_baru,
+                        'nama': nama_penginapan,
+                        'lokasi': lokasi,
+                        'jumlah_kamar': jumlah_kamar,
+                        'harga': harga,
+                        'deskripsi': deskripsi,
+                        'tempat_wisata_terdekat': tempat_wisata_terdekat_list,
+                    }}
+                )
+
+                return redirect(url_for('penginapan_detail_admin', penginapan_id=penginapan_id))
+
+            # Jika method GET maka akan dibawa ke halaman edit penginapan
+            else:
+                return render_template('edit_penginapan_admin.html', penginapan=penginapan)
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for('admin'))
 
 
 @app.route('/cekpesanan/admin')
@@ -360,32 +387,37 @@ def register_user():
     return render_template('register_customer.html', msg=msg)
 
 
+@app.route('/detail_customer/<penginapan_id>')
+def penginapan_detail_customer(penginapan_id):
+    penginapan = db.penginapan.find_one({"_id": ObjectId(penginapan_id)})
+    return render_template('detail_penginapan_customer.html', penginapan=penginapan)
+
 @app.route('/pencarian', methods=['GET'])
 def pencarian():
     token_receive = request.cookies.get(TOKEN_KEY)
     pencarian = request.args.get('pencarian')
 
-    accommodations_per_page = 3
+    penginapan_per_page = 3
 
     page = request.args.get('page', 1, type=int)
 
-    start_index = (page - 1) * accommodations_per_page
-    end_index = start_index + accommodations_per_page
+    start_index = (page - 1) * penginapan_per_page
+    end_index = start_index + penginapan_per_page
 
     if not pencarian:
-        all_accommodations = list(db.penginapan.find())
+        all_penginapan = list(db.penginapan.find())
     else:
-        all_accommodations = list(db.penginapan.find({
+        all_penginapan = list(db.penginapan.find({
             'tempat_wisata_terdekat': {
                 '$regex': f'.*{pencarian}.*',
                 '$options': 'i'
             }
         }))
 
-    paginated_accommodations = all_accommodations[start_index:end_index]
+    paginated_penginapan = all_penginapan[start_index:end_index]
 
-    total_pages = (len(all_accommodations) +
-                   accommodations_per_page - 1) // accommodations_per_page
+    total_pages = (len(all_penginapan) +
+                   penginapan_per_page - 1) // penginapan_per_page
 
     if token_receive:
         try:
@@ -398,14 +430,14 @@ def pencarian():
                 login_in = True
                 user_info = db.customer.find_one(
                     {"username": payload['username']})
-                return render_template('pencarian_customer.html', accommodations=paginated_accommodations, current_page=page, total_pages=total_pages, logged_in=login_in, user_info=user_info)
+                return render_template('pencarian_customer.html', penginapan=paginated_penginapan, current_page=page, total_pages=total_pages, logged_in=login_in, user_info=user_info)
 
         except jwt.ExpiredSignatureError:
             return jsonify({"result": "fail", "msg": "Token login has expired."})
         except jwt.exceptions.DecodeError:
             return jsonify({"result": "fail", "msg": "Token decoding error."})
 
-    return render_template('pencarian_customer.html', accommodations=paginated_accommodations, current_page=page, total_pages=total_pages, logged_in=False)
+    return render_template('pencarian_customer.html', penginapan=paginated_penginapan, current_page=page, total_pages=total_pages, logged_in=False)
 
 
 @app.route('/check_login')
@@ -429,8 +461,8 @@ def check_login():
     return jsonify({'logged_in': False})
 
 
-@app.route('/pesan/<accommodation_id>', methods=['POST'])
-def pesan_accommodation(accommodation_id):
+@app.route('/pesan/<penginapan_id>', methods=['POST'])
+def pesan_accommodation(penginapan_id):
     token_receive = request.cookies.get(TOKEN_KEY)
     if not token_receive:
         return jsonify({"result": "fail", "msg": "Silakan login untuk melakukan pemesanan."})
@@ -449,17 +481,17 @@ def pesan_accommodation(accommodation_id):
         total_harga = int(request.form.get('total_harga'))
 
         accommodation = db.penginapan.find_one(
-            {"_id": ObjectId(accommodation_id)})
+            {"_id": ObjectId(penginapan_id)})
         if accommodation:
             sisa_kamar = accommodation['jumlah_kamar'] - jumlah_kamar
             if sisa_kamar >= 0:
                 db.penginapan.update_one(
-                    {"_id": ObjectId(accommodation_id)},
+                    {"_id": ObjectId(penginapan_id)},
                     {"$set": {'jumlah_kamar': sisa_kamar}}
                 )
 
                 db.pesanan.insert_one({
-                    'accommodation_id': ObjectId(accommodation_id),
+                    'penginapan_id': ObjectId(penginapan_id),
                     'status': 'pending',
                     'gambar': accommodation['gambar'],
                     'nama_penginapan': accommodation['nama'],
@@ -527,8 +559,8 @@ def batalkan_pesanan(order_id):
             jumlah_kamar_dibatalkan = order['jumlah_kamar']
 
             # Dapatkan jumlah kamar yang tersedia saat ini dari akomodasi
-            accommodation_id = order['accommodation_id']
-            akomodasi = db.penginapan.find_one({"_id": accommodation_id})
+            penginapan_id = order['penginapan_id']
+            akomodasi = db.penginapan.find_one({"_id": penginapan_id})
             jumlah_kamar_tersedia = akomodasi['jumlah_kamar']
 
             # Cek apakah sudah H-2 dari tanggal pemesanan
@@ -541,7 +573,7 @@ def batalkan_pesanan(order_id):
 
             # Perbarui jumlah kamar pada penginapan
             db.penginapan.update_one(
-                {"_id": accommodation_id},
+                {"_id": penginapan_id},
                 {"$set": {'jumlah_kamar': jumlah_kamar_tersedia + jumlah_kamar_dibatalkan}}
             )
 

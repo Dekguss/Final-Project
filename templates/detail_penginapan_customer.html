@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ accommodation['nama'] }} | Marerep</title>
+    <title>{{ penginapan['nama'] }} | Marerep</title>
 
     <!-- Link font Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,7 +73,7 @@
             });
 
             function showConfirmationModal(jumlahKamar, tglPesan) {
-                var hargaPerKamar = parseFloat("{{ accommodation['harga'] }}");
+                var hargaPerKamar = parseFloat("{{ penginapan['harga'] }}");
                 var totalHarga = jumlahKamar * hargaPerKamar;
 
                 $("#modalJumlahKamar").text(jumlahKamar);
@@ -85,7 +85,7 @@
                 $("#confirmBookingButton").click(function () {
                     $.ajax({
                         type: 'POST',
-                        url: '/pesan/{{ accommodation["_id"] }}',
+                        url: '/pesan/{{ penginapan["_id"] }}',
                         data: {
                             'jumlah_kamar': jumlahKamar,
                             'tgl_pesan': tglPesan,
@@ -161,14 +161,14 @@
             <div class="col-7">
                 <div class="gambar-detail my-5">
                     <img class="rounded shadow" width="100%" height="100%"
-                        src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
+                        src="{{ url_for('static', filename='penginapan_images/' + penginapan['gambar']) }}"
                         alt="Gambar Penginapan" />
                 </div>
             </div>
             <div class="col-5">
                 <div class="booking my-5 border px-3 py-5 shadow-sm rounded">
                     <h1 style="font-weight: 900; font-size: 30px; text-align: center;">Tanggal Sewa</h1>
-                    <h1 class="mt-3">Rp {{ accommodation['harga'] }}</h1>
+                    <h1 class="mt-3">Rp {{ penginapan['harga'] }}</h1>
                     <form id="modalKonfirmasi">
                         <div>
                             <label for="jumlah_kamar">Jumlah Kamar:</label>
@@ -191,13 +191,13 @@
         <div class="row">
             <div class="col-12">
                 <h1 style="font-size: 24px; font-weight: 700">
-                    {{ accommodation['nama'] }}
+                    {{ penginapan['nama'] }}
                 </h1>
             </div>
             <div class="col-12 mt-3">
                 <div class="d-flex gap-5">
-                    <h1 style="font-size: 18px">Lokasi : {{ accommodation['lokasi'] }}</h1>
-                    <h1 style="font-size: 18px">Tersedia : {{ accommodation['jumlah_kamar'] }} Kamar</h1>
+                    <h1 style="font-size: 18px">Lokasi : {{ penginapan['lokasi'] }}</h1>
+                    <h1 style="font-size: 18px">Tersedia : {{ penginapan['jumlah_kamar'] }} Kamar</h1>
                 </div>
             </div>
         </div>
@@ -208,7 +208,7 @@
                     Deskripsi Tempat Penginapan
                 </h1>
                 <p class="mt-2" style="text-align: justify;">
-                    {{ accommodation['deskripsi'] }}
+                    {{ penginapan['deskripsi'] }}
                 </p>
             </div>
         </div>
@@ -216,7 +216,7 @@
             <div class="col-12">
                 <h1 style="font-size: 20px; font-weight: 700;">Tempat Wisata Terdekat</h1>
                 <ol>
-                    {% for wisata in accommodation['tempat_wisata_terdekat'] %}
+                    {% for wisata in penginapan['tempat_wisata_terdekat'] %}
                     <li style="font-size: 18px; font-weight: 400;" class="mt-3">{{ wisata }}</li>
                     {% endfor %}
                 </ol>

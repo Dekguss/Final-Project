@@ -65,42 +65,42 @@
         <div class="row">
             <div class="col-lg-6 col-12">
                 <h2 class="title">Edit Penginapan</h2>
-                <form method="post" action="{{ url_for('edit_penginapan', id=accommodation['_id']) }}" enctype="multipart/form-data">
+                <form method="post" action="{{ url_for('edit_penginapan', penginapan_id=penginapan['_id']) }}" enctype="multipart/form-data">
                     <!-- Form fields -->
                     <div class="mb-3">
                         <label for="namaPenginapan" class="form-label">Nama Penginapan</label>
                         <input type="text" class="form-control" id="namaPenginapan" name="namaPenginapan"
-                            value="{{ accommodation['nama'] }}" required>
+                            value="{{ penginapan['nama'] }}" required>
                     </div>
         
                     <div class="mb-3">
                         <label for="lokasi" class="form-label">Lokasi</label>
-                        <input type="text" class="form-control" id="lokasi" name="lokasi" value="{{ accommodation['lokasi'] }}"
+                        <input type="text" class="form-control" id="lokasi" name="lokasi" value="{{ penginapan['lokasi'] }}"
                             required>
                     </div>
         
                     <div class="mb-3">
                         <label for="jumlahKamar" class="form-label">Jumlah Kamar</label>
                         <input type="number" class="form-control" id="jumlahKamar" name="jumlahKamar"
-                            value="{{ accommodation['jumlah_kamar'] }}" required>
+                            value="{{ penginapan['jumlah_kamar'] }}" required>
                     </div>
         
                     <div class="mb-3">
                         <label for="harga" class="form-label">Harga</label>
-                        <input type="number" class="form-control" id="harga" name="harga" value="{{ accommodation['harga'] }}"
+                        <input type="number" class="form-control" id="harga" name="harga" value="{{ penginapan['harga'] }}"
                             required>
                     </div>
         
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi</label>
                         <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"
-                            required>{{ accommodation['deskripsi'] }}</textarea>
+                            required>{{ penginapan['deskripsi'] }}</textarea>
                     </div>
         
                     <div class="mb-3">
                         <label for="tempatWisata" class="form-label">Tempat Wisata Terdekat (comma-separated)</label>
                         <input type="text" class="form-control" id="tempatWisata" name="tempatWisata"
-                            value="{{ accommodation['tempat_wisata_terdekat'] | join(', ') }}" required>
+                            value="{{ penginapan['tempat_wisata_terdekat'] | join(', ') }}" required>
                     </div>
         
                     <div class="mb-3">

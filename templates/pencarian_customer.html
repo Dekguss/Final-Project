@@ -124,28 +124,28 @@
                 <div class="album py-5">
                     <div class="container">
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="penginapan-container">
-                            {% for accommodation in accommodations %}
+                            {% for penginapan in penginapan %}
                             <div class="col">
                                 <div class="card shadow-sm">
                                     <div class="image">
-                                        <img src="{{ url_for('static', filename='image_penginapan/' + accommodation['gambar']) }}"
+                                        <img src="{{ url_for('static', filename='penginapan_images/' + penginapan['gambar']) }}"
                                             class="card-img-top" alt="gambar">
                                     </div>
                                     <div class="card-body">
                                         <div class="kepala">
                                             <button type="button" class="btn btn-outline-primary btn-sm" disabled>
-                                                {{ accommodation['lokasi'] }} </button>
+                                                {{ penginapan['lokasi'] }} </button>
                                             <small class="text-body-secondary">Tersedia <b style="color: red;"> {{
-                                                    accommodation['jumlah_kamar'] }} kamar
+                                                    penginapan['jumlah_kamar'] }} kamar
                                                 </b></small>
                                         </div>
                                         <div class="deskripsi">
-                                            <h4 class="card-title-bold">{{ accommodation['nama'] }}</h4>
-                                            <h6 class="d-flex">Harga: Rp {{ accommodation['harga']}}
+                                            <h4 class="card-title-bold">{{ penginapan['nama'] }}</h4>
+                                            <h6 class="d-flex">Harga: Rp {{ penginapan['harga']}}
                                             </h6>
                                         </div>
                                         <div class="d-flex justify-content-start mt-3">
-                                            <a href="{{ url_for('accommodation_detail_customer', accommodation_id=accommodation['_id']) }}"
+                                            <a href="{{ url_for('penginapan_detail_customer', penginapan_id=penginapan['_id']) }}"
                                                 class="btn btn-custom">Detail</a>
                                         </div>
                                     </div>
