@@ -41,11 +41,76 @@
         * {
             font-family: 'Poppins', sans-serif;
         }
-        .img-thumbnail{
-            margin-bottom: 10px;
-        }
         .container.row.rounded-3.py-4.px-3.mb-4 {
             border: 2px solid #558CA1;
+        }
+
+        .gambar {
+            max-width: 400px;
+            max-height: 100%;
+            border: 1px solid #558CA1;
+            position: relative;
+        }
+
+        .gambar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        td,
+        p,
+        select {
+            font-size: 100%;
+        }
+
+        .statusPerubahan {
+            width: 60%;
+            gap: 8rem;
+        }
+
+        .tanggalKadaluarsa {
+            width: 20%;
+        }
+
+        tr td {
+            position: relative;
+            max-width: 100%;
+            padding: none;
+            padding-block: .5rem;
+        }
+
+        tr td:first-child {
+            width: 20%;
+            font-weight: 700;
+            color: rgb(129, 129, 129)
+        }
+
+        tr td:first-child::after {
+            content: ':';
+            position: absolute;
+            right: 0;
+            color: black;
+            font-weight: 300;
+        }
+
+        tr td.st:first-child::after {
+            content: ' ';
+            position: absolute;
+            right: 0;
+            color: black;
+            font-weight: 300;
+        }
+
+        tr td:last-child {
+            width: 80%;
+            padding-inline: .5rem;
+        }
+
+        .table {
+            border: none;
+            margin: 0;
         }
         footer {
             box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
@@ -87,7 +152,7 @@
                 <!-- Login -->
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item d-flex gap-2">
-                        <a class="btn btn-danger" aria-current="page" href="#">logout</a>
+                        <a class="btn btn-danger" aria-current="page" href="/">logout</a>
                     </li>
                 </ul>
             </div>
@@ -95,32 +160,50 @@
     </nav>
 
 
-    <div class="container rounded" style="margin-top: 110px;">
-        {% for order in orders %}
-        {% if order['status'] != 'canceled' %}
-        <div class="container row rounded-3 py-4 px-3 mb-4">
-            <div class="col-md-2">
-                <img src="https://images.unsplash.com/photo-1517363898874-737b62a7db91?q=80&w=1963&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="img-thumbnail" alt="..." width="200">
-            </div>
-            <div class="col-md-8">
-                <h2 class="card-title">{{ order['nama_penginapan'] }}</h2>
-                <p class="card-text">Jumlah Kamar: {{ order['jumlah_kamar'] }}</p>
-                <p class="card-text">Tanggal Pesan: {{ order['tgl_pesan'] }}</p>
-                <p class="card-text">Total Harga: {{ order['total_harga'] }}</p>
+    <!--content-->
+    <div class="container mt-5 rounded">
+        <section class="content">
+            {% for order in orders %}
+            {% if order['status'] != 'canceled' %}
+            <div class="pesan container row rounded-3 py-4 px-3 mb-4">
+                <div id="cek" class="d-flex gap-4 justify-content-stretch w-100">
+                    <div class="gambar d-block p-1">
+                        <img src="{{ url_for('static', filename='penginapan_images/' + order['gambar']) }}" alt="">
+                    </div>
+                    <div class="text d-flex gap-2 flex-column  w-100">
+                        <h2 class="text" style="color: #558CA1; font-weight: 600;">{{ order['nama_penginapan'] }}</h2>
 
-            </div>
-            <div class="col-md-2">
-                <p class="card-text text-center">{{ order['status'] }}</p>
-            </div>
+                        <table>
+                            <tr id="tglPemesan">
+                                <td class="text-start">Tanggal Booking</td>
+                                <td class="text-start">{{ order['tgl_pesan'] }}</td>
+                            </tr>
+                            <tr id="jmlKamar">
+                                <td class="text-start">Jumlah Kamar</td>
+                                <td class="text-start">{{ order['jumlah_kamar'] }} Kamar</td>
+                            </tr>
+                            <tr id="totalHarga">
+                                <td class="text-start">Total Harga</td>
+                                <td class="text-start tour-price">Rp. {{ order['total_harga'] }}</td>
+                            </tr>
+                        </table>
 
-            {% if order['status'] == 'pending' %}
-            <form action="/terima/pesanan/{{ order['_id'] }}" method="POST">
-                <button type="submit" class="btn btn-primary">Terima Pesanan</button>
-            </form>
+                        <div class="mt-2">
+                            {% if order['status'] == 'pending' %}
+                            <form action="/terima/pesanan/{{ order['_id'] }}" method="POST">
+                            <button type="submit" class="btn btn-custom">Terima Pesanan</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="status-badge">
+                        <p class="card-text text-center">{{ order['status'] }}</p>
+                    </div>
+                </div>
+            </div>
             {% endif %}
-        </div>
-        {% endif %}
-        {% endfor %}
+            {% endfor %}
+        </section>
     </div>
 
     <!-- Footer section -->
