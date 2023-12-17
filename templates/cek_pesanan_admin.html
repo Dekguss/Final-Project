@@ -47,6 +47,9 @@
         .container.row.rounded-3.py-4.px-3.mb-4 {
             border: 2px solid #558CA1;
         }
+        footer {
+            box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
+        }
     </style>
 
     <script>
@@ -65,7 +68,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <img src="./static/logo.png./static/logo.png" width="auto" height="70px" alt="logo" />
+                <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +95,7 @@
     </nav>
 
 
-    <div class="container mt-8 rounded">
+    <div class="container rounded" style="margin-top: 110px;">
         {% for order in orders %}
         {% if order['status'] != 'canceled' %}
         <div class="container row rounded-3 py-4 px-3 mb-4">
@@ -119,6 +122,43 @@
         {% endif %}
         {% endfor %}
     </div>
+
+    <!-- Footer section -->
+    <footer class="bd-footer mt-5">
+        <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
+            <div class="row ">
+                <div class="col-lg-6 mb-3">
+                    <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="/"
+                        aria-label="Bootstrap">
+                        <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
+                    </a>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">Marerep</li>
+                        <li class="mb-2"> Tourism</li>
+                        <li class="mb-2">Establish 2023</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-3">
+                    <h5>Menu</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/">Home</a></li>
+                        <li class="mb-2"><a href="">Dashboard</a></li>
+                        <li class="mb-2"><a href="">Cek Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-3">
+                    <h5>Kontak</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">0813-7261-5252</li>
+                        <li class="mb-2">marerep@gmail.com </li>
+                        <li class="mb-2">ig : marerep</li>
+                        <li class="mb-2">tiktok : marerep official</li>
+                        <li class="mb-2">service.marerep@mail.com</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
