@@ -68,8 +68,17 @@
         }
     </script>
     <style>
-        h1{
-            text-align: center;
+        .btn-custom {
+            background-color: #558ca1;
+            color: white;
+            font-size: 18px;
+        }
+        
+        
+        .btn-custom:hover {
+            color: white;
+            background-color: #40788e;
+            color: white;
         }
         #new_email,
         #new_name,
@@ -90,35 +99,40 @@
     <!-- Bagian form HTML -->
     <div class="container shadow-p p-3 mb-5 bg-body-tertiary rounded" style="margin-top: 80px;">
         <h1>Edit Profile</h1>
-        <div class="text-center">
-            <img src="..." alt="..">
+        <div class="container" style="margin-top: 20px;">
+            <div class="row">
+                <div class="col-lg-6">
+                    <form method="post" action="{{ url_for('edit_profile') }}" enctype="multipart/form-data">
+                        <!-- Add input fields for editing -->
+                        <div class="mb-3">
+                            <label for="new_email" class="form-label">New Email:</label>
+                            <input type="email" class="form-control" id="new_email" name="email_give" value="{{ user_info.email }}" required>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label for="new_name" class="form-label">New Name:</label>
+                            <input type="text" class="form-control" id="new_name" name="name_give" value="{{ user_info.nama }}" required>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label for="new_profile_pic" class="form-label">New Profile Photo:</label>
+                            <input type="file" class="form-control" id="new_profile_pic" name="profile_pic">
+                        </div>
+        
+                        <div class="mb-3">
+                            <label for="new_banner_pic" class="form-label">New Banner Photo:</label>
+                            <input type="file" class="form-control" id="new_banner_pic" name="banner_pic">
+                        </div>
+        
+                        <button type="submit" class="btn btn-custom" onclick="update_profile()">Save Changes</button>
+                    </form>
+                </div>
+        
+                <div class="col-lg-6 d-none d-lg-flex">
+                    <img src="https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Trendy Pants and Shoes" class="w-100 rounded" />
+                </div>
+            </div>
         </div>
-        <form method="post" action="{{ url_for('edit_profile') }}" enctype="multipart/form-data">
-            <!-- Add input fields for editing -->
-            <div class="mb-3">
-                <label for="new_email" class="form-label">New Email:</label>
-                <input type="email" class="form-control" id="new_email" name="email_give" value="{{ user_info.email }}"
-                    required>
-            </div>
-
-            <div class="mb-3">
-                <label for="new_name" class="form-label">New Name:</label>
-                <input type="text" class="form-control" id="new_name" name="name_give" value="{{ user_info.nama }}"
-                    required>
-            </div>
-
-            <div class="mb-3">
-                <label for="new_profile_pic" class="form-label">New Profile Photo:</label>
-                <input type="file" class="form-control" id="new_profile_pic" name="profile_pic">
-            </div>
-
-            <div class="mb-3">
-                <label for="new_banner_pic" class="form-label">New Banner Photo:</label>
-                <input type="file" class="form-control" id="new_banner_pic" name="banner_pic">
-            </div>
-
-            <button type="submit" class="btn btn-primary" onclick="update_profile()">Save Changes</button>
-        </form>
     </div>
 
 </body>
