@@ -119,9 +119,27 @@
 
     <script>
         function logout() {
-            $.removeCookie('mytoken', { path: '/' });
-            alert('Signed out!');
-            window.location.href = "/";
+            Swal.fire({
+                title: 'Apakah anda yakin keluar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#558CA1',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal',
+                toast: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.removeCookie('mytoken', { path: '/' });
+                    Swal.fire(
+                        'Signed out!',
+                        'Anda telah keluar.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = "/";
+                    });
+                }
+            });
         }
 
     </script>
@@ -152,7 +170,7 @@
                 <!-- Login -->
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item d-flex gap-2">
-                        <a class="btn btn-danger" aria-current="page" href="/">logout</a>
+                        <button class="btn btn-danger me-2" type="button" onclick="logout()">Logout</button>
                     </li>
                 </ul>
             </div>
@@ -224,9 +242,8 @@
                 <div class="col-lg-3 mb-3">
                     <h5>Menu</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/">Home</a></li>
-                        <li class="mb-2"><a href="">Dashboard</a></li>
-                        <li class="mb-2"><a href="">Cek Pesanan</a></li>
+                        <li class="mb-2"><a href="/admin" class="text-muted">Dashboard</a></li>
+                        <li class="mb-2"><a href="/cekpesanan/admin" class="text-muted">Cek Pesanan</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 mb-3">
