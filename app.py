@@ -30,35 +30,38 @@ TOKEN_KEY = 'mytoken'
 @app.route('/')
 def home():
     token_receive = request.cookies.get(TOKEN_KEY)
+
+    # Mengambil data penginapan dari database
     penginapan = list(db.penginapan.find())
+
+    # Jika belum login
     if token_receive is None:
         logged_in=False
         return render_template('index.html', logged_in=logged_in, penginapan=penginapan)
 
     try:
-        # Lanjutkan dengan dekode token dan pengambilan data customer hanya jika token valid
         payload = jwt.decode(
             token_receive,
             SECRET_KEY,
             algorithms=['HS256']
         )
 
-        # Pastikan payload memiliki id sebelum mencari data customer
+        # Pastikan payload memiliki username sebelum mencari data customer
         if 'username' in payload:
             user_info = db.customer.find_one({"username": payload['username']})
             logged_in = True
             return render_template('index.html', user_info=user_info, logged_in=logged_in, penginapan=penginapan)
         else:
-            # Jika payload tidak memiliki id, token tidak valid
-            # raise jwt.exceptions.InvalidTokenError('Token tidak valid')
             logged_in = False
             return render_template('index.html', logged_in=logged_in, penginapan=penginapan)
+        
     except jwt.ExpiredSignatureError:
         msg = 'Token login anda sudah kedaluarsa!'
     except jwt.exceptions.DecodeError:
         msg = 'Terdapat masalah saat anda login!'
         logged_in = False
     return render_template('index.html', msg=msg, logged_in=logged_in)
+
 
 
 # USER ADMIN
@@ -71,8 +74,7 @@ def login_admin():
         id_receive = request.form.get('id_give')
         password_receive = request.form.get('password_give')
 
-        password_hash = hashlib.sha256(
-            password_receive.encode("utf-8")).hexdigest()
+        password_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
 
         result = db.admin.find_one({
             'id': id_receive,
@@ -102,6 +104,7 @@ def login_admin():
     # Jika methods GET
     msg = request.args.get('msg')
     return render_template('login_admin.html', msg=msg)
+
 
 
 # Dasboard Admin
@@ -291,6 +294,34 @@ def edit_penginapan(penginapan_id):
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for('admin'))
 
+
+@app.route('/pencarian/admin', methods=['GET'])
+def cari_penginapan_admin():
+    token_receive = request.cookies.get(TOKEN_KEY)
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+
+        # Pengecekan ID di payload
+        if 'id' in payload:
+            # Ambil kata kunci pencarian dari URL parameter
+            keyword = request.args.get('pencarian')
+
+            # Lakukan pencarian penginapan berdasarkan nama
+            penginapan = list(db.penginapan.find({
+                'nama': {'$regex': f'.*{keyword}.*', '$options': 'i'}
+            }))
+
+            return render_template('dasboard_admin.html', penginapan=penginapan, keyword=keyword)
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for('admin'))
+
+
 @app.route('/cekpesanan/admin')
 def cek_pesanan_admin():
     token_receive = request.cookies.get(TOKEN_KEY)
@@ -302,16 +333,18 @@ def cek_pesanan_admin():
             algorithms=['HS256']
         )
 
+        # Pengecekan ID di payload
         if 'id' in payload:
             user_info = db.admin.find_one({"id": payload["id"]})
             orders = list(db.pesanan.find())
             return render_template('cek_pesanan_admin.html', orders=orders)
-        else:
-            return redirect(url_for("login_admin", msg="Silahkan login!"))
+      
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login_admin", msg="Token login anda sudah kedaluarsa!"))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login_admin", msg="Terdapat masalah saat anda login!"))
+
+
 
 
 # USER CUSTOMER
@@ -350,10 +383,10 @@ def login_customer():
         else:
             return jsonify({
                 "result": "fail",
-                "msg": "Terdapat kesalahan pada username atau Password anda!"
+                "msg": "Terdapat kesalahan pada Username atau Password anda!"
             })
 
-    # GET
+    # Jika method GET
     msg = request.args.get('msg')
     return render_template('login_customer.html', msg=msg)
 
@@ -422,8 +455,7 @@ def pencarian():
 
     paginated_penginapan = all_penginapan[start_index:end_index]
 
-    total_pages = (len(all_penginapan) +
-                   penginapan_per_page - 1) // penginapan_per_page
+    total_pages = (len(all_penginapan) + penginapan_per_page - 1) // penginapan_per_page
 
     if token_receive:
         try:
@@ -434,8 +466,7 @@ def pencarian():
             )
             if 'username' in payload:
                 login_in = True
-                user_info = db.customer.find_one(
-                    {"username": payload['username']})
+                user_info = db.customer.find_one({"username": payload['username']})
                 return render_template('pencarian_customer.html', penginapan=paginated_penginapan, current_page=page, total_pages=total_pages, logged_in=login_in, user_info=user_info)
 
         except jwt.ExpiredSignatureError:

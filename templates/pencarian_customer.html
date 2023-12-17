@@ -34,6 +34,16 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
 
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-main {
+            flex: 1;
+        }
+
         .image {
             overflow: hidden;
         }
@@ -48,6 +58,7 @@
         .card:hover img:hover {
             transform: scale(1.2);
         }
+
         footer {
             box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
         }
@@ -105,7 +116,7 @@
         </div>
     </nav>
 
-    <div class="content-main mt-5">
+    <div class="content-main">
         <section class="content">
             <div class="container">
                 <div class="jelajahi">
@@ -199,7 +210,7 @@
                 </div>
         </section>
     </div>
-    
+
     <!-- footer section -->
     <footer class="bd-footer mt-5">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">

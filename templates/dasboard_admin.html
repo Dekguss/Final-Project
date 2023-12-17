@@ -43,8 +43,35 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-main {
+            flex: 1;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
         .btn-custom {
             margin-right: 10px;
+        }
+
+        .btn-danger {
+            background-color: rgb(204, 19, 19);
+            color: white;
+            font-size: 18px;
+        }
+
+
+        .btn-danger:hover {
+            color: white;
+            background-color: rgb(163, 8, 8);
+            color: white;
         }
 
         .image {
@@ -106,6 +133,30 @@
                 }
             });
         }
+
+        function logout() {
+            Swal.fire({
+                title: 'Apakah anda yakin keluar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#558CA1',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal',
+                toast: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.removeCookie('mytoken', { path: '/' });
+                    Swal.fire(
+                        'Signed out!',
+                        'Anda telah keluar.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = "/";
+                    });
+                }
+            });
+        }
     </script>
 </head>
 
@@ -114,7 +165,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <img src="./static/logo.png" width="auto" height="70px" alt="logo" />
+                <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -130,31 +181,31 @@
                     </li>
                 </ul>
 
-                <!-- Login -->
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item d-flex gap-2">
-                        <a class="btn btn-danger" aria-current="page" href="#">logout</a>
+                        <button class="btn btn-danger me-2" type="button" onclick="logout()">Logout</button>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="content-main mt-5">
+    <!-- Main -->
+    <div class="content-main mt-2">
         <section class="content">
             <div class="container">
-                <div class="jelajahi">
-                    <h2>Jelajahi Admin</h2>
-                    <p>lorem</p>
+                <div class="jelajahi mb-5">
+                    <h2 style="font-weight: 600; text-align: center;">Daftar Penginapan</h2>
                 </div>
-                <form action="/pencarian" method="GET" class="search-form mt-4">
+                <a class="btn btn-success me-2" href="/tambah/penginapan" role="button">Tambah Penginapan</a>
+
+                <form action="/pencarian/admin" method="GET" class="search-form mt-4">
                     <div class="input-group" style="height: 50px;">
-                        <input type="text" name="pencarian" class="form-control"
-                            placeholder="Cari penginapan berdasarkan tempat wisata terdekat...">
+                        <input type="text" name="pencarian" class="form-control" placeholder="Cari penginapan...">
                         <button type="submit" class="btn btn-custom">Cari</button>
-                        <a class="btn btn-custom" href="/tambah/penginapan" role="button">tambah</a>
                     </div>
                 </form>
+
                 <div class="album  py-5">
                     <div class="container">
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="penginapan-container">
@@ -178,10 +229,10 @@
                                             <h6 class="d-flex">Harga: Rp {{ penginapan['harga']}}
                                             </h6>
                                         </div>
+
                                         <div class="d-flex justify-content-start mt-3">
                                             <a href="{{ url_for('penginapan_detail_admin', penginapan_id=penginapan['_id']) }}"
                                                 class="btn btn-custom">Detail</a>
-
                                             <a href="#" class="btn btn-danger"
                                                 onclick="deletePenginapan('{{ penginapan['_id'] }}')">Delete</a>
                                         </div>
@@ -190,8 +241,6 @@
                             </div>
                             {% endfor %}
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -199,14 +248,14 @@
         </section>
     </div>
 
-    <!-- footer section -->
+    <!-- Footer -->
     <footer class="bd-footer mt-5">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
             <div class="row">
                 <div class="col-lg-6 mb-3">
                     <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="/"
                         aria-label="Bootstrap">
-                        <img src="./static/logo.png" width="auto" height="70px" alt="logo" />
+                        <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
                     </a>
                     <ul class="list-unstyled small">
                         <li class="mb-2">Marerep</li>
@@ -217,9 +266,8 @@
                 <div class="col-lg-3 mb-3">
                     <h5>Menu</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/">Home</a></li>
-                        <li class="mb-2"><a href="">Dashboard</a></li>
-                        <li class="mb-2"><a href="">Cek Pesanan</a></li>
+                        <li class="mb-2"><a href="/admin" class="text-muted">Dashboard</a></li>
+                        <li class="mb-2"><a href="/cekpesanan/admin" class="text-muted">Cek Pesanan</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 mb-3">

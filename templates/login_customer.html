@@ -6,54 +6,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login | Customer</title>
 
-    <!-- Link bootstrap -->
+    <!-- Link Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Balinese&display=swap" rel="stylesheet">
+
+    <!-- Link Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
-    <!-- Link jquery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.js"
-        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Link Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Link jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+    <!-- Link Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+
+    <!-- Link jQuery Cookie -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
+    <!-- Include SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <style>
-        .container{
-            padding-top: 5rem;
+        .container {
+            padding-top: 8rem;
+            width: 100vw;
+            height: 50vw;
         }
+
         .rounded-t-5 {
-          border-top-left-radius: 0.5rem;
-          border-top-right-radius: 0.5rem;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
         }
-    
+
         @media (min-width: 992px) {
-          .rounded-tr-lg-0 {
-            border-top-right-radius: 0;
-          }
-    
-          .rounded-bl-lg-5 {
-            border-bottom-left-radius: 0.5rem;
-          }
+            .rounded-tr-lg-0 {
+                border-top-right-radius: 0;
+            }
+
+            .rounded-bl-lg-5 {
+                border-bottom-left-radius: 0.5rem;
+            }
         }
-        .btn-block{
+
+        .btn-block {
+            font-weight: 600;
+            border: #558CA1;
             background-color: #558CA1;
             color: white;
         }
+
+        .btn-block:hover {
+            background-color: #40788e;
+            border-color: #40788e;
+            color: white;
+        }
+
+        .btn-block.clicked {
+            background-color: #40788e;
+            border-color: #40788e;
+            color: white;
+        }
+
         #username,
-        #password {
-        border: 2px solid #558CA1;
+        #email,
+        #password,
+        #password2 {
+            border: 2px solid #558CA1;
         }
-        #username:focus,
-        #password:focus {
-        border: 3px solid #558CA1;
+
+        #user_info.username:focus,
+        #password:focus,
+        #password2:focus {
+            border: 3px solid #558CA1;
         }
+
         form {
-        text-align: left;
+            text-align: left;
         }
 
         .form-outline {
-        margin-bottom: 1rem;
+            margin-bottom: 1rem;
         }
-      </style>
+
+        .swal2-popup {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .swal2-title {
+            color: #558CA1;
+        }
+
+        .swal2-icon {
+            color: #558CA1;
+        }
+
+        .swal2-content {
+            color: #40788e;
+        }
+    </style>
 
     <script>
         function login() {
@@ -61,7 +125,11 @@
             let password = $("#password").val();
 
             if (username === "" || password === "") {
-                alert("Oops! Username dan Password Harus diIsi!");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Username dan Password Harus Diisi!',
+                });
                 return;
             }
 
@@ -75,9 +143,19 @@
                 success: function (response) {
                     if (response["result"] === "success") {
                         $.cookie("mytoken", response["token"], { path: "/" });
-                        window.location.replace("/");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Successful!',
+                            text: 'Redirecting...',
+                        }).then(() => {
+                            window.location.replace("/");
+                        });
                     } else {
-                        alert(response["msg"]);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response["msg"],
+                        });
                     }
                 },
             });
@@ -94,51 +172,54 @@
 </head>
 
 <body>
-   <!-- Section: Design Block -->
-   <section class="container text-center text-lg-start ">
-    <div class="card mb-3 shadow p-3 mb-5 bg-white rounded">
-        <div class="row g-0">
+    <!-- Section: Design Block -->
+    <section class="container text-center text-lg-start ">
+        <div class="card mb-3 shadow p-3 mb-5 bg-white rounded">
+            <div class="row g-0">
 
-            <!-- Form Section -->
-            <div class="col-lg-6">
-                <div class="card-body py-5 px-md-5">
-                    <div class="text-center">
-                        <img src="../static/logo.png"
-                          style="width: 185px;" alt="logo">
-                      </div>
-                    <form>
-                        <h3 class="fw-bold mb-5">Masuk</h3>
-                        <!-- Email input -->
-                        <div class="form-outline mb-3">
-                            <label class="form-label" for="form2Example1">username</label>
-                            <input type="text" id="username" class="form-control" />
+                <!-- Form Section -->
+                <div class="col-lg-6">
+                    <div class="card-body px-md-5">
+                        <div class="text-center">
+                            <img src="../static/logo.png" style="width: 185px;" alt="logo">
                         </div>
+                        <form>
+                            <h3 class="fw-bold">Login Akun</h3>
+                            <!-- Email input -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="form2Example1">Username</label>
+                                <input type="text" id="username" class="form-control" />
+                            </div>
 
-                        <!-- Password input -->
-                        <div class="form-outline mb-3">
-                            <label class="form-label" for="form2Example2">Password</label>
-                            <input type="password" id="password" class="form-control" /> 
-                        </div>
+                            <!-- Password input -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="form2Example2">Password</label>
+                                <input type="password" id="password" class="form-control" />
+                            </div>
 
-                        <!-- Submit button -->
-                        <button type="button" id="masukButton" class="btn btn-block col-12 mt-3">
-                            Masuk
-                        </button>
-                        <hr>
-                        <p class="text-center">belum punya akun?<a href="/register/user" style="color: #558CA1;">daftar di sini</a></p>
-                    </form>
+                            <!-- Submit button -->
+                            <button type="button" id="masukButton" class="btn btn-block col-12 mt-3">
+                                Login
+                            </button>
+                            <hr>
+                            <p class="text-center">Belum punya akun? <a href="/register/user"
+                                    style="color: #558CA1;">Daftar Disini</a></p>
+
+                            <br><br>
+                            <footer class="text-center text-muted"> ©2023 Marerep</footer>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Image Section -->
+                <div class="col-lg-6 d-none d-lg-flex">
+                    <img src="https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        alt="wisata bali" class="rounded img-fluid" width="631" height="636,84" />
                 </div>
             </div>
-
-            <!-- Image Section -->
-            <div class="col-lg-6 d-none d-lg-flex">
-                <img src="https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="wisata bali" class="rounded img-fluid" width="631" height="636,84"/>
-            </div>
         </div>
-    </div>
     </section>
-        <!-- Section: Design Block -->
+    <!-- Section: Design Block -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

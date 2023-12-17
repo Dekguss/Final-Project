@@ -1,26 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | Admin</title>
+    <title>Login | Customer</title>
 
+    <!-- Link Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Balinese&display=swap" rel="stylesheet">
 
-    <!-- Link bootstrap -->
+    <!-- Link Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- font poppins -->
 
+    <!-- Link Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <!-- Link jquery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.js"
-        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Link jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+    <!-- Link Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+
+    <!-- Link jQuery Cookie -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <!-- Include SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <style>
         .container {
-            padding-top: 5rem;
+            padding-top: 8rem;
+            width: 100vw;
+            height: 50vw;
         }
 
         .rounded-t-5 {
@@ -39,17 +61,34 @@
         }
 
         .btn-block {
+            font-weight: 600;
+            border: #558CA1;
             background-color: #558CA1;
             color: white;
         }
 
+        .btn-block:hover {
+            background-color: #40788e;
+            border-color: #40788e;
+            color: white;
+        }
+
+        .btn-block.clicked {
+            background-color: #40788e;
+            border-color: #40788e;
+            color: white;
+        }
+
         #id,
-        #password {
+        #email,
+        #password,
+        #password2 {
             border: 2px solid #558CA1;
         }
 
-        #id:focus,
-        #password:focus {
+        #user_info.id:focus,
+        #password:focus,
+        #password2:focus {
             border: 3px solid #558CA1;
         }
 
@@ -60,98 +99,131 @@
         .form-outline {
             margin-bottom: 1rem;
         }
+
+        .swal2-popup {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .swal2-title {
+            color: #558CA1;
+        }
+
+        .swal2-icon {
+            color: #558CA1;
+        }
+
+        .swal2-content {
+            color: #40788e;
+        }
     </style>
+
     <script>
-        $(document).ready(function () {
-            function login() {
-                let id = $("#id").val();
-                let password = $("#password").val();
+        function login() {
+            let id = $("#id").val();
+            let password = $("#password").val();
 
-                if (id === "" || password === "") {
-                    alert("Oops! Username dan Password Harus diIsi!");
-                    return;
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: "/login/admin",
-                    data: {
-                        id_give: id,
-                        password_give: password,
-                    },
-                    success: function (response) {
-                        if (response["result"] === "success") {
-                            $.cookie("mytoken", response["token"], { path: "/" });
-                            window.location.replace("/admin");
-                        } else {
-                            alert('msg');
-                        }
-                    },
+            if (id === "" || password === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'ID dan Password Harus Diisi!',
                 });
+                return;
             }
 
-            // Adding onclick function to the "Masuk" button
+            $.ajax({
+                type: "POST",
+                url: "/login/admin",
+                data: {
+                    id_give: id,
+                    password_give: password,
+                },
+                success: function (response) {
+                    if (response["result"] === "success") {
+                        $.cookie("mytoken", response["token"], { path: "/" });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Successful!',
+                            text: 'Redirecting...',
+                        }).then(() => {
+                            window.location.replace("/admin");
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response["msg"],
+                        });
+                    }
+                },
+            });
+        }
+
+        // Menambahkan fungsi onclick pada tombol "Masuk"
+        $(document).ready(function () {
             $("#masukButton").on("click", function (e) {
-                e.preventDefault(); // Prevent the default form submission
-                login(); // Call the login function
+                e.preventDefault(); // Mencegah pengiriman formulir default
+                login(); // Panggil fungsi login
             });
         });
     </script>
 </head>
 
 <body>
+    <!-- Section: Design Block -->
+    <section class="container text-center text-lg-start ">
+        <div class="card mb-3 shadow p-3 mb-5 bg-white rounded">
+            <div class="row g-0">
 
-    <body>
-
-        <body>
-            <!-- Section: Design Block -->
-            <section class="container text-center text-lg-start ">
-                <div class="card mb-3 shadow p-3 mb-5 bg-white rounded">
-                    <div class="row g-0">
-
-                        <!-- Form Section -->
-                        <div class="col-lg-6">
-                            <div class="card-body py-5 px-md-5">
-                                <div class="text-center">
-                                    <img src="../static/logo.png" style="width: 185px;" alt="logo">
-                                </div>
-                                <form>
-                                    <h3 class="fw-bold mb-5">Masuk</h3>
-                                    <!-- Email input -->
-                                    <div class="form-outline mb-3">
-                                        <label class="form-label" for="form2Example1">ID</label>
-                                        <input type="text" id="id" class="form-control" />
-                                    </div>
-
-                                    <!-- Password input -->
-                                    <div class="form-outline mb-3">
-                                        <label class="form-label" for="form2Example2">Password</label>
-                                        <input type="password" id="password" class="form-control" />
-                                    </div>
-
-                                    <!-- Submit button -->
-                                    <button type="button" id="masukButton" class="btn btn-block col-12 mt-3">
-                                        Masuk
-                                    </button>
-                                    <hr>
-                                    <footer class="text-center">Copyright © 2023 marerep</footer>
-                                </form>
+                <!-- Form Section -->
+                <div class="col-lg-6">
+                    <div class="card-body px-md-5">
+                        <div class="text-center">
+                            <img src="../static/logo.png" style="width: 185px;" alt="logo">
+                        </div>
+                        <form>
+                            <h3 class="fw-bold">Login Admin</h3>
+                            <!-- Email input -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="form2Example1">ID</label>
+                                <input type="text" id="id" class="form-control" />
                             </div>
-                        </div>
 
-                        <!-- Image Section -->
-                        <div class="col-lg-6 d-none d-lg-flex">
-                            <img src="https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                alt="Trendy Pants and Shoes" class="w-100 rounded" />
-                        </div>
+                            <!-- Password input -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="form2Example2">Password</label>
+                                <input type="password" id="password" class="form-control" />
+                            </div>
+
+                            <!-- Submit button -->
+                            <button type="button" id="masukButton" class="btn btn-block col-12 mt-3">
+                                Login
+                            </button>
+                            <hr>
+                            <p class="text-center">Belum punya akun? <a href="/register/user"
+                                    style="color: #558CA1;">Daftar Disini</a></p>
+
+                            <br><br>
+                            <footer class="text-center text-muted"> ©2023 Marerep</footer>
+                        </form>
                     </div>
                 </div>
-            </section>
-            <!-- Section: Design Block -->
 
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-                crossorigin="anonymous"></script>
-        </body>
+                <!-- Image Section -->
+                <div class="col-lg-6 d-none d-lg-flex">
+                    <img src="https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        alt="wisata bali" class="rounded img-fluid" width="631" height="636,84" />
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section: Design Block -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
 
 </html>
