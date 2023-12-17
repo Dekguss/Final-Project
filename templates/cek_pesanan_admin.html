@@ -192,6 +192,14 @@
                         <h2 class="text" style="color: #558CA1; font-weight: 600;">{{ order['nama_penginapan'] }}</h2>
 
                         <table>
+                            <tr id="namaPemesan">
+                                <td class="text-start">Nama Pemesan</td>
+                                <td class="text-start">
+                                    <div>{{ order.
+                                        customer_username
+                                        }}</div>
+                                </td>
+                            </tr>
                             <tr id="tglPemesan">
                                 <td class="text-start">Tanggal Booking</td>
                                 <td class="text-start">{{ order['tgl_pesan'] }}</td>
