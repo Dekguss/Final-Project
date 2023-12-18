@@ -428,8 +428,39 @@ def register_user():
 
 @app.route('/detail_customer/<penginapan_id>')
 def penginapan_detail_customer(penginapan_id):
+    token_receive = request.cookies.get(TOKEN_KEY)
+
+    # Mengambil data penginapan dari database
     penginapan = db.penginapan.find_one({"_id": ObjectId(penginapan_id)})
-    return render_template('detail_penginapan_customer.html', penginapan=penginapan)
+
+    # Jika belum login
+    if token_receive is None:
+        logged_in=False
+        return render_template('detail_penginapan_customer.html', logged_in=logged_in, penginapan=penginapan)
+
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+
+        # Pastikan payload memiliki username sebelum mencari data customer
+        if 'username' in payload:
+            user_info = db.customer.find_one({"username": payload['username']})
+            logged_in = True
+            return render_template('detail_penginapan_customer.html', user_info=user_info, logged_in=logged_in, penginapan=penginapan)
+        else:
+            logged_in = False
+            return render_template('detail_penginapan_customer.html', logged_in=logged_in, penginapan=penginapan)
+        
+    except jwt.ExpiredSignatureError:
+        msg = 'Token login anda sudah kedaluarsa!'
+    except jwt.exceptions.DecodeError:
+        msg = 'Terdapat masalah saat anda login!'
+        logged_in = False
+    return render_template('detail_penginapan_customer.html', msg=msg, logged_in=logged_in)
+
 
 @app.route('/pencarian', methods=['GET'])
 def pencarian():
@@ -734,6 +765,7 @@ def edit_profile():
                 # Mendapatkan path file gambar lama (jika ada) untuk profil dan banner
                 old_profile_pic_path = os.path.join(app.config['PROFILE_IMAGES_FOLDER'], user_info.get('profile_pic', ''))
                 old_banner_pic_path = os.path.join(app.config['BANNER_IMAGES_FOLDER'], user_info.get('banner_pic', ''))
+                
 
                 # Buat penyimpanan baru untuk data
                 new_doc = {
@@ -775,7 +807,7 @@ def edit_profile():
                     {"username": payload['username']},
                     {"$set": new_doc}
                 )
-
+            
                 # Redirect ke halaman profil setelah pembaruan
                 return redirect(url_for('view_profile', username=payload['username']))
 
@@ -787,7 +819,6 @@ def edit_profile():
         return redirect(url_for("login_customer", msg="Token login anda sudah kedaluarsa!"))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login_customer", msg="Terdapat masalah saat anda login!"))
-
 
 
 # Ganti Password Customer

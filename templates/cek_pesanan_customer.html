@@ -55,8 +55,8 @@
         }
     
         .gambar img {
-            width: 100%;
-            height: 100%;
+            width: 250px;
+            height: 260px;
             object-fit: cover;
             object-position: center;
         }
@@ -118,10 +118,8 @@
         footer {
             box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
         }
-    
-        /* Gaya responsif menggunakan media query */
+
         @media (max-width: 767px) {
-            /* Sesuaikan gaya untuk layar kecil di sini */
             .container.row.rounded-3.py-4.px-3.mb-4 {
                 border: 1px solid #558CA1;
                 margin: 0.5rem;
@@ -263,9 +261,9 @@
                     </div>
                     <div class="status-badge">
                         {% if order.status == 'pending' %}
-                        <p id="hasilStatus" class="text-center text-warning p-2 my-0 "> Pending</p>
-                        {% elif order.status == 'success' %}
-                        <p id="hasilStatus" class="text-center text-success p-2 my-0 ">Success</p>
+                        <p id="hasilStatus" class="text-center text-warning p-2 my-0 ">Pending</p>
+                        {% elif order.status == 'accepted' %}
+                        <p id="hasilStatus" class="text-center text-success p-2 my-0 ">Diterima</p>
                         {% else %}
                         <p id="hasilStatus" class="text-center text-danger p-2 my-0 ">
                             Dibatalkan</p>

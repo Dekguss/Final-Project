@@ -1,0 +1,48 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-main {
+    flex: 1;
+}
+
+.image {
+    overflow: hidden;
+}
+
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.image img {
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.kepala {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.card img {
+    width: 500px;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.card:hover img:hover {
+    transform: scale(1.2);
+}
+
+footer {
+    box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
+}

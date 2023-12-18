@@ -74,6 +74,12 @@
             color: white;
         }
 
+        .kepala {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
         .image {
             overflow: hidden;
         }
@@ -251,28 +257,32 @@
     <!-- Footer -->
     <footer class="bd-footer mt-5">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
-            <div class="row">
+            <div class="row ">
                 <div class="col-lg-6 mb-3">
                     <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="/"
                         aria-label="Bootstrap">
                         <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
                     </a>
                     <ul class="list-unstyled small">
-                        <li class="mb-2">Marerep</li>
-                        <li class="mb-2"> Tourism</li>
-                        <li class="mb-2">Establish 2023</li>
+                        <li class="mb-2" style="font-size: 18px;">Marerep bertujuan agar siapa saja yang ingin
+                            berkunjung ke Bali mendapat
+                            penginapan yang dekat tempat wisata tujuannya. </li>
                     </ul>
                 </div>
-                <div class="col-lg-3 mb-3">
+                <div class="col-lg-3 mb-5">
                     <h5>Menu</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/admin" class="text-muted">Dashboard</a></li>
-                        <li class="mb-2"><a href="/cekpesanan/admin" class="text-muted">Cek Pesanan</a></li>
+                    <ul class="list-unstyled menu">
+                        <li class="nav-item mb-2">
+                            <a class="nav-link" href="/admin">Dashboard</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link" href="/cekpesanan/admin">Cek Pesanan</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="col-lg-3 mb-3">
                     <h5>Kontak</h5>
-                    <ul class="list-unstyled">
+                    <ul class="list-unstyled menu">
                         <li class="mb-2">0813-7261-5252</li>
                         <li class="mb-2">marerep@gmail.com </li>
                         <li class="mb-2">ig : marerep</li>
