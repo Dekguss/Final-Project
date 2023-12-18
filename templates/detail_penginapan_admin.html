@@ -52,6 +52,11 @@
         ol {
             margin-bottom: 20px;
         }
+
+        .lokasi {
+            color: #558ca1;
+            font-weight: 800;
+        }
     </style>
 
     <script>
@@ -68,7 +73,7 @@
             </div>
             <div class="col-md-6">
                 <h2>{{ penginapan['nama'] }}</h2>
-                <p>Lokasi: {{ penginapan['lokasi'] }}</p>
+                <p class="lokasi">Lokasi: {{ penginapan['lokasi'] }}</p>
                 <p>Harga: Rp {{ penginapan['harga'] }}</p>
                 <p>Deskripsi: {{ penginapan['deskripsi'] }}</p>
                 
