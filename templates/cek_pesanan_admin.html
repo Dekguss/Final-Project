@@ -115,6 +115,30 @@
         footer {
             box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
         }
+        @media screen and (max-width: 767px) {
+            .navbar-nav,
+            .navbar-nav.ms-auto,
+            .navbar-toggler {
+                text-align: center;
+            }
+
+            .navbar-brand img {
+                width: 100%; 
+            }
+
+            .pesan {
+                padding: 10px; 
+            }
+
+            .gambar {
+                max-width: 100%;
+                height: auto;
+            }
+
+            .text {
+                font-size: 18px; 
+            }
+        }
     </style>
 
     <script>
@@ -141,7 +165,6 @@
                 }
             });
         }
-
     </script>
 
 
@@ -230,6 +253,19 @@
             {% endif %}
             {% endfor %}
         </section>
+        <div>
+            <img src="https://i.imgur.com/..." alt="Bedugul Villa">
+          </div>
+          <div>
+            <p>Nama Pemesan: <strong>reza</strong></p>
+            <p>Tanggal Booking: <strong>2024-02-09</strong></p>
+            <p>Jumlah Kamar: <strong>2 Kamar</strong></p>
+            <p>Total Harga: <strong>Rp. 400000</strong></p>
+            <button>Terima Pesanan</button>
+          </div>
+          <div>
+            <p>Status: <strong>pending</strong></p>
+          </div>
     </div>
 
     <!-- Footer section -->
