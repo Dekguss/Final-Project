@@ -6,33 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home</title>
 
-   <!-- Link Font -->
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link
-       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
-       rel="stylesheet">
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Balinese&display=swap" rel="stylesheet">
+    <!-- Link Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Balinese&display=swap" rel="stylesheet">
 
-   <!-- Link Bootstrap CSS -->
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Link Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
-   <!-- Link Bootstrap Icons -->
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Link Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-   <!-- Link jQuery -->
-   <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <!-- Link jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 
-   <!-- Link Bootstrap JavaScript -->
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-       integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-       crossorigin="anonymous"></script>
+    <!-- Link Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
 
-   <!-- Link jQuery Cookie -->
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <!-- Link jQuery Cookie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
 
@@ -41,8 +41,14 @@
         * {
             font-family: 'Poppins', sans-serif;
         }
-        .container.row.rounded-3.py-4.px-3.mb-4 {
+
+        .container.rounded {
             border: 2px solid #558CA1;
+            margin-top: 150px;
+        }
+
+        .wrapper-cek {
+            justify-content: space-between;
         }
 
         .gambar {
@@ -50,6 +56,7 @@
             max-height: 100%;
             border: 1px solid #558CA1;
             position: relative;
+            border-radius: 3px;
         }
 
         .gambar img {
@@ -57,6 +64,16 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
+            padding: 5px;
+        }
+
+        .summary {
+            margin-top: -30px;
+        }
+
+        .status_pemesanan {
+            margin-top: -18px;
+
         }
 
         td,
@@ -74,48 +91,12 @@
             width: 20%;
         }
 
-        tr td {
-            position: relative;
-            max-width: 100%;
-            padding: none;
-            padding-block: .5rem;
-        }
-
-        tr td:first-child {
-            width: 20%;
-            font-weight: 700;
-            color: rgb(129, 129, 129)
-        }
-
-        tr td:first-child::after {
-            content: ':';
-            position: absolute;
-            right: 0;
-            color: black;
-            font-weight: 300;
-        }
-
-        tr td.st:first-child::after {
-            content: ' ';
-            position: absolute;
-            right: 0;
-            color: black;
-            font-weight: 300;
-        }
-
-        tr td:last-child {
-            width: 80%;
-            padding-inline: .5rem;
-        }
-
-        .table {
-            border: none;
-            margin: 0;
-        }
         footer {
             box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
         }
-        @media screen and (max-width: 767px) {
+
+        @media (max-width: 767px) {
+
             .navbar-nav,
             .navbar-nav.ms-auto,
             .navbar-toggler {
@@ -123,11 +104,11 @@
             }
 
             .navbar-brand img {
-                width: 100%; 
+                width: 100%;
             }
 
             .pesan {
-                padding: 10px; 
+                padding: 10px;
             }
 
             .gambar {
@@ -136,9 +117,29 @@
             }
 
             .text {
-                font-size: 18px; 
+                font-size: 12px;
             }
-        }
+
+            .container.rounded {
+                margin-top: 120px;
+                width: 98%;
+            }
+
+            .summary {
+                margin-top: -20px;
+                margin-left: -20px;
+                width: 80%;
+            }
+    
+
+            .col-md-1{      
+                width: 25%;
+                font-size: 9.4pt;
+                font-weight: bolder;
+                margin-top: 20px;
+            }     
+            }
+        
     </style>
 
     <script>
@@ -200,59 +201,42 @@
         </div>
     </nav>
 
-
-    <!--content-->
-    <div class="container mt-5 rounded">
-        <section class="content">
+    <div class="container rounded">
+        <div class="wrapper-cek mt-3">
             {% for order in orders %}
             {% if order['status'] != 'canceled' %}
-            <div class="pesan container row rounded-3 py-4 px-3 mb-4">
-                <div id="cek" class="d-flex gap-4 justify-content-stretch w-100">
-                    <div class="gambar d-block p-1">
-                        <img src="{{ url_for('static', filename='penginapan_images/' + order['gambar']) }}" alt="">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="gambar col-md-4">
+                        <img src="{{ url_for('static', filename='penginapan_images/' + order['gambar']) }}"
+                            class="img-fluid rounded-start" alt="photo-penginapan">
                     </div>
-                    <div class="text d-flex gap-2 flex-column  w-100">
-                        <h2 class="text" style="color: #558CA1; font-weight: 600;">{{ order['nama_penginapan'] }}</h2>
-
-                        <table>
-                            <tr id="namaPemesan">
-                                <td class="text-start">Nama Pemesan</td>
-                                <td class="text-start">
-                                    <div>{{ order.
-                                        customer_username
-                                        }}</div>
-                                </td>
-                            </tr>
-                            <tr id="tglPemesan">
-                                <td class="text-start">Tanggal Booking</td>
-                                <td class="text-start">{{ order['tgl_pesan'] }}</td>
-                            </tr>
-                            <tr id="jmlKamar">
-                                <td class="text-start">Jumlah Kamar</td>
-                                <td class="text-start">{{ order['jumlah_kamar'] }} Kamar</td>
-                            </tr>
-                            <tr id="totalHarga">
-                                <td class="text-start">Total Harga</td>
-                                <td class="text-start tour-price">Rp. {{ order['total_harga'] }}</td>
-                            </tr>
-                        </table>
-
-                        <div class="mt-2">
-                            {% if order['status'] == 'pending' %}
-                            <form action="/terima/pesanan/{{ order['_id'] }}" method="POST">
-                            <button type="submit" class="btn btn-custom">Terima Pesanan</button>
-                            </form>
-                            {% endif %}
+                    <div class="summary col-md-7">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color: #558CA1; font-weight: 600;">Nama Penginapan</h5>
+                            <p class="card-text">Nama Pemesan: {{ order.customer_username}}</p>
+                            <p class="card-text">Tanggal Booking: {{ order['tgl_pesan'] }} </p>
+                            <p class="card-text">Jumlah Kamar: {{ order['jumlah_kamar'] }}</p>
+                            <p class="card-text">Total Harga:Rp. {{ order['total_harga'] }}</p>
+                            <div class="mt-3 p-1">
+                                {% if order['status'] == 'pending' %}
+                                <form action="/terima/pesanan/{{ order['_id'] }}" method="POST">
+                                    <button type="submit" class="btn btn-custom">Terima Pesanan</button>
+                                </form>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-                    <div class="status-badge">
-                        <p class="card-text text-center">{{ order['status'] }}</p>
+                    <div class="col-md-1">
+                        <div class="status_pemesanan card-body">
+                            <p class="card-text">{{ order['status'] }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
             {% endif %}
             {% endfor %}
-        </section>
+        </div>
     </div>
 
     <!-- Footer section -->
