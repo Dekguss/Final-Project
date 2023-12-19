@@ -4,6 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Tag OG -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon" />
+    <meta property="og:title" content="Marerep" />
+    <meta property="og:description" content="Yuk Berlibur ke Bali" />
+    <meta property="og:image" content="{{ url_for('static', filename='logo.png') }}" />
+    
     <title>Home | Marerep</title>
 
     <!-- Link Font -->
@@ -33,7 +41,7 @@
 
     <!-- Link jQuery Cookie -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-    
+
     <!-- Link CSS -->
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet" />
@@ -262,7 +270,8 @@
                         <img src="./static/logo.png" width="auto" height="70px" alt="logo" />
                     </a>
                     <ul class="list-unstyled small">
-                        <li class="mb-2" style="font-size: 18px;">Marerep bertujuan agar siapa saja yang ingin berkunjung ke Bali mendapat
+                        <li class="mb-2" style="font-size: 18px;">Marerep bertujuan agar siapa saja yang ingin
+                            berkunjung ke Bali mendapat
                             penginapan yang dekat tempat wisata tujuannya. </li>
                     </ul>
                 </div>
@@ -295,7 +304,7 @@
             </div>
         </div>
     </footer>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>

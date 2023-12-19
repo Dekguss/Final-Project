@@ -4,8 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home</title>
-
+    <title>Cek Pesanan | Marerep</title>
 
     <!-- Link Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,131 +34,174 @@
     <!-- Link jQuery Cookie -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
+    <!-- Include SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
 
     <style>
-        /* Gaya umum untuk semua ukuran layar */
         * {
             font-family: 'Poppins', sans-serif;
         }
-    
-        .container.row.rounded-3.py-4.px-3.mb-4 {
-            border: 2px solid #558CA1;
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-    
+
+        main {
+            flex: 1;
+        }
+
+        footer {
+            box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
+            margin-top: auto;
+        }   
+
+        main {
+            margin-top: 150px;
+        }
+
+        .container.rounded {
+            border: 2px solid #558CA1;
+            margin-top: 20px;
+        }
+
+        .wrapper-cek {
+            justify-content: space-between;
+        }
+
         .gambar {
             max-width: 400px;
             max-height: 100%;
             border: 1px solid #558CA1;
             position: relative;
+            border-radius: 3px;
         }
-    
+
         .gambar img {
-            width: 250px;
-            height: 260px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             object-position: center;
+            padding: 5px;
         }
-    
+
+        .summary {
+            margin-top: -30px;
+        }
+
+        .status_pemesanan {
+            margin-top: -18px;
+
+        }
+
         td,
         p,
         select {
             font-size: 100%;
         }
-    
+
         .statusPerubahan {
             width: 60%;
             gap: 8rem;
         }
-    
+
         .tanggalKadaluarsa {
             width: 20%;
         }
-    
-        tr td {
-            position: relative;
-            max-width: 100%;
-            padding: none;
-            padding-block: .5rem;
-        }
-    
-        tr td:first-child {
-            width: 20%;
-            font-weight: 700;
-            color: rgb(129, 129, 129)
-        }
-    
-        tr td:first-child::after {
-            content: ':';
-            position: absolute;
-            right: 0;
-            color: black;
-            font-weight: 300;
-        }
-    
-        tr td.st:first-child::after {
-            content: ' ';
-            position: absolute;
-            right: 0;
-            color: black;
-            font-weight: 300;
-        }
-    
-        tr td:last-child {
-            width: 80%;
-            padding-inline: .5rem;
-        }
-    
-        .table {
-            border: none;
-            margin: 0;
-        }
-    
+
         footer {
             box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
         }
 
         @media (max-width: 767px) {
-            .container.row.rounded-3.py-4.px-3.mb-4 {
-                border: 1px solid #558CA1;
-                margin: 0.5rem;
+
+            .navbar-nav,
+            .navbar-nav.ms-auto,
+            .navbar-toggler {
+                text-align: center;
             }
-    
+
+            .navbar-brand img {
+                width: 100%;
+            }
+
+            .pesan {
+                padding: 10px;
+            }
+
             .gambar {
                 max-width: 100%;
-                margin-bottom: 1rem;
+                height: auto;
             }
-    
-            .statusPerubahan {
-                width: 100%;
-                gap: 1rem;
-                display: flex;
-                flex-direction: column;
+
+            .text {
+                font-size: 12px;
             }
-    
-            .tanggalKadaluarsa {
-                width: 100%;
+
+            .container.rounded {
+                width: 98%;
             }
-    
-            tr td {
-                width: 100%;
-                display: block;
+
+            .summary {
+                margin-top: -20px;
+                margin-left: -20px;
+                width: 80%;
             }
-    
-            tr td:first-child,
-            tr td.st:first-child {
-                font-weight: 500;
-                margin-bottom: 0.5rem;
-            }
-    
-            tr td:last-child {
-                width: 100%;
+
+
+            .col-md-1 {
+                width: 25%;
+                font-size: 9.4pt;
+                font-weight: bolder;
+                margin-top: 20px;
             }
         }
     </style>
-    
+
 
     <script>
+        $(document).ready(function () {
+            $("form").submit(function (event) {
+                event.preventDefault();
+                var form = $(this);
+
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.result === 'success') {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: response.msg,
+                                icon: 'success',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = response.redirect_url;
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.msg,
+                                icon: 'error',
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong.',
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        });
     </script>
 </head>
 
@@ -212,101 +254,94 @@
         </div>
     </nav>
 
-    <div class="container mt-5 rounded">
-        <section class="content">
-            {% if user_orders %}
-            {% for order in user_orders %}
-            <div class="pesan container row rounded-3 py-4 px-3 mb-4">
-                <div id="cek" class="d-flex gap-4 justify-content-stretch w-100">
-                    <div class="gambar d-block p-1">
-                        <img src="{{ url_for('static', filename='penginapan_images/' + order['gambar']) }}" alt="">
-                    </div>
-                    <div class="text d-flex gap-2 flex-column  w-100">
-                        <h2 class="text" style="color: #558CA1; font-weight: 600;">{{ order['nama_penginapan'] }}</h2>
-
-                        <table>
-                            <tr id="namaPemesan">
-                                <td class="text-start">Nama Pemesan</td>
-                                <td class="text-start">
-                                    <div>{{ order.
-                                        customer_username
-                                        }}</div>
-                                </td>
-                            </tr>
-                            <tr id="tglPemesan">
-                                <td class="text-start">Tanggal Booking</td>
-                                <td class="text-start">{{ order['tgl_pesan'] }}</td>
-                            </tr>
-                            <tr id="jmlKamar">
-                                <td class="text-start">Jumlah Kamar</td>
-                                <td class="text-start">{{ order['jumlah_kamar'] }} Kamar</td>
-                            </tr>
-                            <tr id="totalHarga">
-                                <td class="text-start">Total Harga</td>
-                                <td class="text-start tour-price">Rp. {{ order['total_harga'] }}</td>
-                            </tr>
-                        </table>
-
-                        <div class="mt-2">
-                            {% if order['status'] == 'canceled' %}
-                            <form action="/hapus/pesanan/{{ order['_id'] }}" method="post">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">Hapus</button>
-                            </form>
+    <main>
+        {% if user_orders %}
+        {% for order in user_orders %}
+        <div class="container rounded">
+            <div class="wrapper-cek mt-3">
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="gambar col-md-4">
+                            <img src="{{ url_for('static', filename='penginapan_images/' + order['gambar']) }}"
+                                class="img-fluid rounded-start" alt="photo-penginapan"
+                                style="width: 500px; height: 300px;">
+                        </div>
+                        <div class="summary col-md-7">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3" style="color: #558CA1; font-weight: 600;">{{
+                                    order['nama_penginapan'] }}</h5>
+                                <p class="card-text">Nama Pemesan: {{ order.customer_username}}</p>
+                                <p class="card-text">Tanggal Booking: {{ order['tgl_pesan'] }} </p>
+                                <p class="card-text">Jumlah Kamar: {{ order['jumlah_kamar'] }}</p>
+                                <p class="card-text">Total Harga:Rp. {{ order['total_harga'] }}</p>
+                                <div class="mt-3 p-1">
+                                    {% if order['status'] == 'canceled' %}
+                                    <form action="/hapus/pesanan/{{ order['_id'] }}" method="post">
+                                        <button type="submit" class="btn btn-outline-danger btn-md">Hapus
+                                            Pesanan</button>
+                                    </form>
+                                    {% else %}
+                                    <form action="/batal/pesanan/{{ order['_id'] }}" method="post">
+                                        <button type="submit" class="btn btn-danger btn-md">Batalkan Pesanan</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            {% if order.status == 'pending' %}
+                            <p id="hasilStatus" class="text-center text-warning p-2 my-0 ">Pending</p>
+                            {% elif order.status == 'accepted' %}
+                            <p id="hasilStatus" class="text-center text-success p-2 my-0 ">Diterima</p>
                             {% else %}
-                            <form action="/batal/pesanan/{{ order['_id'] }}" method="post">
-                                <button type="submit" class="btn btn-danger btn-sm">Batal</button>
-                            </form>
+                            <p id="hasilStatus" class="text-center text-danger p-2 my-0 ">Dibatalkan</p>
                             {% endif %}
                         </div>
                     </div>
-                    <div class="status-badge">
-                        {% if order.status == 'pending' %}
-                        <p id="hasilStatus" class="text-center text-warning p-2 my-0 ">Pending</p>
-                        {% elif order.status == 'accepted' %}
-                        <p id="hasilStatus" class="text-center text-success p-2 my-0 ">Diterima</p>
-                        {% else %}
-                        <p id="hasilStatus" class="text-center text-danger p-2 my-0 ">
-                            Dibatalkan</p>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
-            {% endfor %}
-            {% else %}
-            <p class="text-center m-5 alert alert-danger">Pesanan Kosong</p>
-            {% endif %}
-        </section>
-    </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-center m-5 alert alert-danger">Pesanan Kosong</p>
+        {% endif %}
+    </main>
 
-    
-    <!-- Footer section -->
+
+    <!-- Footer -->
     <footer class="bd-footer mt-5">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
             <div class="row ">
-                <div class="col-lg-5 mb-3">
+                <div class="col-lg-6 mb-3">
                     <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="/"
                         aria-label="Bootstrap">
                         <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
                     </a>
                     <ul class="list-unstyled small">
-                        <li class="mb-2">Marerep <Est class="2023">Est. 2023</Est>
-                        </li>
-                        <li class="mb-2">Visit Bali, Discover Indonesia</li>
-                        <li class="mb-2">Marerep bertujuan agar siapa saja yang ingin berkunjung ke Bali mendapat
+                        <li class="mb-2" style="font-size: 18px;">Marerep bertujuan agar siapa saja yang ingin
+                            berkunjung ke Bali mendapat
                             penginapan yang dekat tempat wisata tujuannya. </li>
                     </ul>
                 </div>
-                <div class="col-lg-4 mb-3">
+                <div class="col-lg-3 mb-5">
                     <h5>Menu</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/">Home</a></li>
-                        <li class="mb-2"><a href="">Dashboard</a></li>
-                        <li class="mb-2"><a href="">Cek Pesanan</a></li>
+                    <ul class="list-unstyled menu">
+                        <li class="nav-item mb-2">
+                            <a class="nav-link" href="/">Home</a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link" href="/pencarian">Pencarian</a>
+                        </li>
+                        {% if logged_in %}
+                        <li class="nav-item mb-2">
+                            <a class="nav-link" href="/cekpesanan/{{user_info.username}}">Cek Pesanan</a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
                 <div class="col-lg-3 mb-3">
                     <h5>Kontak</h5>
-                    <ul class="list-unstyled">
+                    <ul class="list-unstyled menu">
                         <li class="mb-2">0813-7261-5252</li>
                         <li class="mb-2">marerep@gmail.com </li>
                         <li class="mb-2">ig : marerep</li>

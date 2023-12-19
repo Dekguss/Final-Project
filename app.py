@@ -596,8 +596,7 @@ def user_orders(username):
             )
             if 'username' in payload:
                 login_in = True
-                user_info = db.customer.find_one(
-                    {"username": payload['username']})
+                user_info = db.customer.find_one({"username": payload['username']})
                 return render_template('cek_pesanan_customer.html', user_orders=user_orders, user_info=user_info, logged_in=login_in)
         except jwt.ExpiredSignatureError:
             return jsonify({"result": "fail", "msg": "Token login has expired."})
@@ -638,7 +637,12 @@ def batalkan_pesanan(order_id):
             sekarang = datetime.utcnow()
 
             if sekarang >= batas_pembatalan:
-                return jsonify({"result": "fail", "msg": "Tidak dapat membatalkan pesanan kurang dari 2 hari sebelum tanggal pemesanan."})
+                return jsonify({
+                    "result": "fail",
+                    "msg": "Tidak dapat membatalkan pesanan kurang dari 2 hari sebelum tanggal pemesanan!",
+                    "redirect_url": url_for('user_orders', username=payload['username'])
+                })
+                # return jsonify({"result": "fail", "msg": "Tidak dapat membatalkan pesanan kurang dari 2 hari sebelum tanggal pemesanan."})
 
             # Perbarui jumlah kamar pada penginapan
             db.penginapan.update_one(
@@ -651,7 +655,12 @@ def batalkan_pesanan(order_id):
                 {"_id": ObjectId(order_id)},
                 {"$set": {'status': 'canceled'}}
             )
-            return redirect(url_for('user_orders', username=payload['username']))
+            return jsonify({
+                "result": "success",
+                "msg": "Pembatalan Berhasil!",
+                "redirect_url": url_for('user_orders', username=payload['username'])
+            })
+            # return redirect(url_for('user_orders', username=payload['username']))
         else:
             return jsonify({"result": "fail", "msg": "Pesanan tidak ditemukan atau sudah dibatalkan."})
     except jwt.ExpiredSignatureError:
@@ -681,7 +690,12 @@ def hapus_pesanan(order_id):
         if order and order['status'] == 'canceled':
             # Hapus pesanan
             db.pesanan.delete_one({"_id": ObjectId(order_id)})
-            return redirect(url_for('user_orders', username=payload['username']))
+            return jsonify({
+                "result": "success",
+                "msg": "Pesanan berhasil dihapus!",
+                "redirect_url": url_for('user_orders', username=payload['username'])
+            })
+            # return redirect(url_for('user_orders', username=payload['username']))
         else:
             return jsonify({"result": "fail", "msg": "Pesanan tidak ditemukan atau sudah dihapus."})
     except jwt.ExpiredSignatureError:
@@ -767,7 +781,7 @@ def edit_profile():
                             "email": updated_email
                         }
 
-                        if "profile_give" in request.files:
+                        if "profile_give" in request.files:    
                             file = request.files.get('profile_give')
                             filename = secure_filename(file.filename)
                             extension = filename.split(".")[-1]
