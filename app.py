@@ -6,9 +6,20 @@ from datetime import datetime
 from bson import ObjectId
 import jwt
 from datetime import datetime, timedelta
-import os
 from werkzeug.utils import secure_filename
+import os
 
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+MONGODB_URI = os.environ.get("MONGODB_URI")
+DB_NAME =  os.environ.get("DB_NAME")
+
+client = MongoClient(MONGODB_URI)
+db = client[DB_NAME]
 
 app = Flask(__name__)
 
@@ -17,14 +28,8 @@ app.config['PENGINAPAN_IMAGES_FOLDER'] = './static/penginapan_images'
 app.config['PROFILE_IMAGES_FOLDER'] = './static/profile_images'
 app.config['BANNER_IMAGES_FOLDER'] = './static/banner_images'
 
-
-MONGODB_CONNECTION_STRING = 'mongodb+srv://dwiadnyana:041002Dekgus@cluster0.rv3yldr.mongodb.net/?retryWrites=true&w=majority'
-client = MongoClient(MONGODB_CONNECTION_STRING)
-db = client.Marerep
-
-TOKEN_KEY = 'mytoken'
-
-SECRET_KEY = 'QWERTY1234'
+SECRET_KEY = os.environ.get("SECRET_KEY")
+TOKEN_KEY = os.environ.get("TOKEN_KEY")
 
 
 # HOME
