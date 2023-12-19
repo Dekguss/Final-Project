@@ -8,11 +8,7 @@
 
 
     <!-- Link bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <!-- font poppins -->
@@ -32,59 +28,47 @@
         * {
             font-family: 'Poppins', sans-serif;
         }
-
-        body {
-            padding: 20px;
+        .container.kotak{
+            margin-top: 110px;
         }
-
-        .container {
-            margin-top: 5rem;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            color: #4CAF50;
-        }
-
-        p {
-            margin-bottom: 15px;
-        }
-
-        ol {
-            margin-bottom: 20px;
-        }
-
-        .lokasi {
-            color: #558ca1;
-            font-weight: 800;
-        }
-
-        .card-des {
-            border-width: 0px;
-
-        }
-
         footer {
             box-shadow: 6px 4px 6px 6px rgb(222, 221, 221);
         }
     </style>
 
     <script>
-
+        function logout() {
+            Swal.fire({
+                title: 'Apakah anda yakin keluar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#558CA1',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal',
+                toast: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.removeCookie('mytoken', { path: '/' });
+                    Swal.fire(
+                        'Signed out!',
+                        'Anda telah keluar.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = "/";
+                    });
+                }
+            });
+        }
     </script>
 </head>
 
 <body>
     <!--Navbar-->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar mb-5 navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <img src="./static/logo.png" width="mauto" height="70px" alt="logo" />
+                <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,56 +93,43 @@
         </div>
     </nav>
 
-    <!-- atas -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <img src="{{ url_for('static', filename='penginapan_images/' + penginapan['gambar']) }}"
-                    alt="penginapan Image">
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>{{ penginapan['nama'] }}</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="lokasi">Lokasi: {{ penginapan['lokasi'] }}</p>
-                        <p>Harga: Rp {{ penginapan['harga'] }}</p>
-                        <p>Tempat Wisata Terdekat:</p>
-                        <ol>
-                            {% for wisata in penginapan['tempat_wisata_terdekat'] %}
-                            <li>{{ wisata }}</li>
-                            {% endfor %}
-                        </ol>
-                        <a href="{{ url_for('edit_penginapan', penginapan_id=penginapan['_id']) }}"
-                            class="btn btn-warning">Edit
-                            Penginapan</a>
-                    </div>
+   <!-- content-->
+   <div class="container kotak">
+    <div class="row mt-3">
+        <div class="col-md-12 text-center">
+            <h1>Detail</h1>
+        </div>
+        <div class="col-md-5 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ url_for('static', filename='penginapan_images/' + penginapan['gambar']) }}" class="card-img-top shadow-sm p-3 mb-5 bg-body-tertiary rounded" alt="penginapan Image" style="width: 100%;">
                 </div>
             </div>
         </div>
-    </div>
-    <!-- deskripsi -->
-    <div class="container">
-        <div class="wrapper-deskripsi">
-            <div class="card-des mb-2 mt-1">
-                <div class="row g-0">
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">Deskripsi</h5>
-                            <p class="card-text">{{ penginapan['deskripsi'] }}</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <img src="../static/detail-penginapanadmin.svg" class="img-fluid rounded-start"
-                            alt="marerep-project">
-
-                    </div>
+        <div class="col-md-7 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center">{{ penginapan['nama'] }}</h2>
+                    <h4>Lokasi: {{ penginapan['lokasi'] }}</h4>
+                    <h4>Harga: Rp {{ penginapan['harga'] }}</h4>
+                    <p>Tempat Wisata Terdekat:</p>
+                    <ol>
+                        {% for wisata in penginapan['tempat_wisata_terdekat'] %}
+                        <li>{{ wisata }}</li>
+                        {% endfor %}
+                    </ol>
+                    <a href="{{ url_for('edit_penginapan', penginapan_id=penginapan['_id']) }}" class="btn btn-warning">Edit Penginapan</a>
                 </div>
             </div>
         </div>
-
+        <hr>
+        <div class="col-md-12 mb-3 text-center">
+            <h3 class="title">Deskripsi</h3>
+            <hr>
+            <p class="card-text">{{ penginapan['deskripsi'] }}</p>
+        </div>
     </div>
+</div>
 
     <footer class="bd-footer mt-5">
         <div class="container py-4 py-md-5 px-4 px-md-3 text-body-secondary">
@@ -166,7 +137,7 @@
                 <div class="col-lg-5 mb-3">
                     <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="/"
                         aria-label="Bootstrap">
-                        <img src="./static/logo.png" width="auto" height="70px" alt="logo" />
+                        <img src="../static/logo.png" width="auto" height="70px" alt="logo" />
                     </a>
                     <ul class="list-unstyled small">
                         <li class="mb-2">Marerep <Est class="2023">Est. 2023</Est>
@@ -198,9 +169,7 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 </html>
